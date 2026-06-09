@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { PageLoader } from "components/commons";
 import MovieDetails from "components/MovieDetails";
@@ -8,13 +8,26 @@ import useDebounce from "hooks/useDebounce";
 import { Search } from "neetoicons";
 import { Input, NoData } from "neetoui";
 import { isEmpty } from "ramda";
+import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import MovieListItem from "./MovieListItem";
+
+const HISTORY_STORAGE_KEY = "cinesearcher-history";
+const ACTIVE_ID_STORAGE_KEY = "cinesearcher-active-id";
 
 const MovieList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [activeHistoryId, setActiveHistoryId] = useState(
+    () => getFromLocalStorage(ACTIVE_ID_STORAGE_KEY) || null
+  );
+
+  const [history, setHistory] = useState(
+    () => getFromLocalStorage(HISTORY_STORAGE_KEY) || []
+  );
+
+  const searchInputRef = useRef(null);
+  const itemRefs = useRef({});
 
   const debouncedSearchTerm = useDebounce(searchTerm);
   const fetchTerm = debouncedSearchTerm || "spider-man";
@@ -24,14 +37,41 @@ const MovieList = () => {
   const movies = data?.Search || [];
   const hasError = data?.Response === "False";
 
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === "/" && document.activeElement !== searchInputRef.current) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleViewDetails = movie => {
     setSelectedMovieId(movie.imdbID);
-    setHistory(prev => {
-      const alreadyExists = prev.find(item => item.imdbID === movie.imdbID);
-      if (alreadyExists) return prev;
+    setActiveHistoryId(movie.imdbID);
+    setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.imdbID);
 
-      return [{ imdbID: movie.imdbID, Title: movie.Title }, ...prev];
-    });
+    const alreadyExists = history.find(item => item.imdbID === movie.imdbID);
+
+    if (alreadyExists) {
+      itemRefs.current[movie.imdbID]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+
+      return;
+    }
+
+    const updatedHistory = [
+      { imdbID: movie.imdbID, Title: movie.Title },
+      ...history,
+    ];
+    setHistory(updatedHistory);
+    setToLocalStorage(HISTORY_STORAGE_KEY, updatedHistory);
   };
 
   return (
@@ -42,8 +82,9 @@ const MovieList = () => {
             <Input
               autoFocus={false}
               className="w-full max-w-2xl rounded-md border-[#ddd] bg-white shadow-sm"
-              placeholder="Search any movie or series..."
+              placeholder="Search any movie or series... (press / to focus)"
               prefix={<Search className="text-gray-400" />}
+              ref={searchInputRef}
               size="large"
               type="search"
               value={searchTerm}
@@ -72,11 +113,13 @@ const MovieList = () => {
           )}
         </div>
       </div>
-      {history.length > 0 && (
-        <div className="sticky top-0 h-screen overflow-y-auto border-l border-gray-200 bg-white p-6">
-          <ViewHistory activeId={selectedMovieId} history={history} />
-        </div>
-      )}
+      <div className="sticky top-0 h-screen overflow-y-auto border-l border-gray-200 bg-white p-6">
+        <ViewHistory
+          activeId={activeHistoryId}
+          history={history}
+          itemRefs={itemRefs}
+        />
+      </div>
       {selectedMovieId && (
         <MovieDetails
           imdbID={selectedMovieId}
