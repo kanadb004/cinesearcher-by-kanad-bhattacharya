@@ -1,4 +1,5 @@
 import moviesApi from "apis/movies";
+import { Toastr } from "neetoui";
 import { useQuery } from "react-query";
 
 export const useShowMovie = params =>
@@ -13,4 +14,9 @@ export const useFetchMovies = params =>
     queryKey: ["movies", params],
     queryFn: () => moviesApi.fetch(params),
     keepPreviousData: true,
+    onSuccess: data => {
+      if (data?.Response === "False") {
+        Toastr.error(data.Error);
+      }
+    },
   });
