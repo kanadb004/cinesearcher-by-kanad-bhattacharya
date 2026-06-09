@@ -128,26 +128,29 @@ const MovieList = () => {
               }}
             />
           </div>
-          {isLoading ? (
-            <PageLoader />
-          ) : hasError || isEmpty(movies) ? (
-            <div className="flex h-full w-full items-center justify-center pt-20">
-              <NoData
-                description={data?.Error || "Try changing search term."}
-                title="No movies found"
-              />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {movies.map(movie => (
-                <MovieListItem
-                  key={movie.imdbID}
-                  {...movie}
-                  onViewDetails={() => handleViewDetails(movie)}
+          {
+            // eslint-disable-next-line no-nested-ternary
+            isLoading ? (
+              <PageLoader />
+            ) : hasError || isEmpty(movies) ? (
+              <div className="flex h-full w-full items-center justify-center pt-20">
+                <NoData
+                  description={data?.Error || "Try changing search term."}
+                  title="No movies found"
                 />
-              ))}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {movies.map(movie => (
+                  <MovieListItem
+                    key={movie.imdbID}
+                    {...movie}
+                    onViewDetails={() => handleViewDetails(movie)}
+                  />
+                ))}
+              </div>
+            )
+          }
         </div>
         {!hasError && totalResults > DEFAULT_PAGE_SIZE && (
           <div className="mb-5 mt-8 self-end pr-6">
