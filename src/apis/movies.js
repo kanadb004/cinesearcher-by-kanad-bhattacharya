@@ -1,24 +1,30 @@
 import axios from "axios";
-import { REACT_APP_OMDB_API_KEY } from "env";
 
-const show = ({ id, plot = "short" }) =>
-  axios.get("http://www.omdbapi.com/", {
+const show = async ({ id, plot = "short" }) => {
+  const response = await axios.get("http://www.omdbapi.com/", {
     params: {
-      apikey: REACT_APP_OMDB_API_KEY,
+      apikey: process.env.REACT_APP_OMDB_API_KEY,
       i: id,
       plot,
     },
   });
 
-const fetch = ({ searchTerm, type, page = 1 }) =>
-  axios.get("http://www.omdbapi.com/", {
+  return response.data;
+};
+
+const fetch = async ({ searchTerm, type, year, page = 1 }) => {
+  const response = await axios.get("http://www.omdbapi.com/", {
     params: {
-      apikey: REACT_APP_OMDB_API_KEY,
+      apikey: process.env.REACT_APP_OMDB_API_KEY,
       s: searchTerm,
       type,
+      y: year,
       page,
     },
   });
+
+  return response.data;
+};
 
 const moviesApi = { show, fetch };
 
