@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/extensions
-import fallbackPoster from "assets/images/fallback-poster.svg";
-import { PageLoader } from "components/commons";
+import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
 import { Modal, Typography } from "neetoui";
 
@@ -8,6 +6,8 @@ import "./index.css";
 
 const MovieDetails = ({ imdbID, onClose }) => {
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
+
+  const isPosterValid = movie.Poster && movie.Poster !== "N/A";
 
   return (
     <Modal
@@ -42,12 +42,18 @@ const MovieDetails = ({ imdbID, onClose }) => {
           <PageLoader />
         ) : (
           <div className="flex flex-col gap-6 md:flex-row">
-            <img
-              alt={movie.Title}
-              className="w-full max-w-[200px] self-center md:self-start"
-              src={movie.Poster !== "N/A" ? movie.Poster : fallbackPoster}
-              style={{ width: "200px", borderRadius: "8px", flexShrink: 0 }}
-            />
+            {isPosterValid ? (
+              <img
+                alt={movie.Title}
+                className="w-full max-w-[200px] self-center rounded-lg md:self-start"
+                src={movie.Poster}
+              />
+            ) : (
+              <FallbackImage
+                alt={movie.Title}
+                className="w-full max-w-[200px] self-center rounded-lg md:self-start"
+              />
+            )}
             <div className="min-w-0 flex-1 space-y-3 overflow-hidden">
               <Typography className="leading-relaxed text-gray-500">
                 {movie.Plot}
