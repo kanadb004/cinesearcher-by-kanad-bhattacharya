@@ -4,38 +4,55 @@ import { PageLoader } from "components/commons";
 import MovieDetails from "components/MovieDetails";
 import ViewHistory from "components/ViewHistory";
 import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
-import useDebounce from "hooks/useDebounce";
 import { Search } from "neetoicons";
-import { Input, NoData } from "neetoui";
+import { Input, NoData, Pagination } from "neetoui";
 import { isEmpty } from "ramda";
+import { useLocation, useHistory } from "react-router-dom";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import MovieListItem from "./MovieListItem";
 
 const HISTORY_STORAGE_KEY = "cinesearcher-history";
 const ACTIVE_ID_STORAGE_KEY = "cinesearcher-active-id";
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_INDEX = 1;
 
 const MovieList = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation();
+  const routerHistory = useHistory();
+
+  const searchParams = new URLSearchParams(location.search);
+  const searchTerm = searchParams.get("searchTerm") || "";
+  const currentPage = Number(searchParams.get("page")) || DEFAULT_PAGE_INDEX;
+
+  const [searchKey, setSearchKey] = useState(searchTerm);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [activeHistoryId, setActiveHistoryId] = useState(
     () => getFromLocalStorage(ACTIVE_ID_STORAGE_KEY) || null
   );
 
-  const [history, setHistory] = useState(
+  const [viewHistory, setViewHistory] = useState(
     () => getFromLocalStorage(HISTORY_STORAGE_KEY) || []
   );
 
   const searchInputRef = useRef(null);
   const itemRefs = useRef({});
+  const debounceTimer = useRef(null);
 
-  const debouncedSearchTerm = useDebounce(searchTerm);
-  const fetchTerm = debouncedSearchTerm || "spider-man";
+  const fetchTerm = searchTerm || "spider-man";
 
-  const { data = {}, isLoading } = useFetchMovies({ searchTerm: fetchTerm });
+  const { data = {}, isLoading } = useFetchMovies({
+    searchTerm: fetchTerm,
+    page: currentPage,
+  });
 
   const movies = data?.Search || [];
   const hasError = data?.Response === "False";
+  const totalResults = Number(data?.totalResults) || 0;
+
+  useEffect(() => {
+    setSearchKey(searchTerm);
+  }, [searchTerm]);
 
   useEffect(() => {
     const handleKeyDown = e => {
@@ -50,12 +67,20 @@ const MovieList = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const handlePageNavigation = newPage => {
+    const params = new URLSearchParams(location.search);
+    params.set("page", newPage);
+    routerHistory.replace(`/movies?${params.toString()}`);
+  };
+
   const handleViewDetails = movie => {
     setSelectedMovieId(movie.imdbID);
     setActiveHistoryId(movie.imdbID);
     setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.imdbID);
 
-    const alreadyExists = history.find(item => item.imdbID === movie.imdbID);
+    const alreadyExists = viewHistory.find(
+      item => item.imdbID === movie.imdbID
+    );
 
     if (alreadyExists) {
       itemRefs.current[movie.imdbID]?.scrollIntoView({
@@ -68,9 +93,9 @@ const MovieList = () => {
 
     const updatedHistory = [
       { imdbID: movie.imdbID, Title: movie.Title },
-      ...history,
+      ...viewHistory,
     ];
-    setHistory(updatedHistory);
+    setViewHistory(updatedHistory);
     setToLocalStorage(HISTORY_STORAGE_KEY, updatedHistory);
   };
 
@@ -87,8 +112,20 @@ const MovieList = () => {
               ref={searchInputRef}
               size="large"
               type="search"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              value={searchKey}
+              onChange={({ target: { value } }) => {
+                setSearchKey(value);
+                clearTimeout(debounceTimer.current);
+                debounceTimer.current = setTimeout(() => {
+                  routerHistory.replace(
+                    value
+                      ? `/movies?page=${DEFAULT_PAGE_INDEX}&searchTerm=${encodeURIComponent(
+                          value
+                        )}`
+                      : "/movies"
+                  );
+                }, 350);
+              }}
             />
           </div>
           {isLoading ? (
@@ -112,11 +149,21 @@ const MovieList = () => {
             </div>
           )}
         </div>
+        {!hasError && totalResults > DEFAULT_PAGE_SIZE && (
+          <div className="mb-5 mt-8 self-end pr-6">
+            <Pagination
+              count={totalResults}
+              navigate={handlePageNavigation}
+              pageNo={currentPage}
+              pageSize={DEFAULT_PAGE_SIZE}
+            />
+          </div>
+        )}
       </div>
       <div className="sticky top-0 h-screen overflow-y-auto border-l border-gray-200 bg-white p-6">
         <ViewHistory
           activeId={activeHistoryId}
-          history={history}
+          history={viewHistory}
           itemRefs={itemRefs}
         />
       </div>
