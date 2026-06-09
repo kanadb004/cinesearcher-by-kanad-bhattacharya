@@ -1,7 +1,7 @@
-import fallbackPoster from "assets/images/fallback-poster";
+// eslint-disable-next-line import/extensions
+import fallbackPoster from "assets/images/fallback-poster.svg";
 import { PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
-// eslint-disable-next-line import/extensions
 import { Modal, Typography } from "neetoui";
 
 import "./index.css";

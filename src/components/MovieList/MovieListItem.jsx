@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 // eslint-disable-next-line import/extensions
-import fallbackPoster from "assets/images/fallback-poster";
+import fallbackPoster from "assets/images/fallback-poster.svg";
 import { Button, Typography } from "neetoui";
 
 import "./MovieListItem.css";
