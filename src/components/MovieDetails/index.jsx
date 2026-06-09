@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/extensions
+import fallbackPoster from "assets/images/fallback-poster.svg";
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
 import { Modal, Typography } from "neetoui";
@@ -42,19 +44,24 @@ const MovieDetails = ({ imdbID, onClose }) => {
           <PageLoader />
         ) : (
           <div className="flex flex-col gap-6 md:flex-row">
-            {isPosterValid ? (
-              <img
-                alt={movie.Title}
-                className="w-full max-w-[200px] self-center rounded-lg md:self-start"
-                src={movie.Poster}
-              />
-            ) : (
-              <FallbackImage
-                alt={movie.Title}
-                className="w-full max-w-[200px] self-center rounded-lg md:self-start"
-              />
-            )}
-            <div className="min-w-0 flex-1 space-y-3 overflow-hidden">
+            <div className="flex w-full justify-center md:w-1/3 md:justify-start">
+              {isPosterValid ? (
+                <img
+                  alt={movie.Title}
+                  className="w-full max-w-[250px] rounded-lg object-cover"
+                  src={movie.Poster}
+                  onError={e => {
+                    e.target.src = fallbackPoster;
+                  }}
+                />
+              ) : (
+                <FallbackImage
+                  alt={movie.Title}
+                  className="w-full max-w-[250px] rounded-lg"
+                />
+              )}
+            </div>
+            <div className="w-full space-y-3 md:w-2/3">
               <Typography className="leading-relaxed text-gray-500">
                 {movie.Plot}
               </Typography>
