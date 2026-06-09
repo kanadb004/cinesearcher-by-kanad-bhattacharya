@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { PageLoader } from "components/commons";
+import MovieDetails from "components/MovieDetails";
 import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
 import useDebounce from "hooks/useDebounce";
 import { Search } from "neetoicons";
@@ -11,13 +12,12 @@ import MovieListItem from "./MovieListItem";
 
 const MovieList = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
+  const debouncedSearchTerm = useDebounce(searchTerm);
   const fetchTerm = debouncedSearchTerm || "spider-man";
 
-  const { data = {}, isLoading } = useFetchMovies({
-    searchTerm: fetchTerm,
-  });
+  const { data = {}, isLoading } = useFetchMovies({ searchTerm: fetchTerm });
 
   const movies = data?.Search || [];
   const hasError = data?.Response === "False";
@@ -49,11 +49,21 @@ const MovieList = () => {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {movies.map(movie => (
-              <MovieListItem key={movie.imdbID} {...movie} />
+              <MovieListItem
+                key={movie.imdbID}
+                {...movie}
+                onViewDetails={() => setSelectedMovieId(movie.imdbID)}
+              />
             ))}
           </div>
         )}
       </div>
+      {selectedMovieId && (
+        <MovieDetails
+          imdbID={selectedMovieId}
+          onClose={() => setSelectedMovieId(null)}
+        />
+      )}
     </div>
   );
 };
