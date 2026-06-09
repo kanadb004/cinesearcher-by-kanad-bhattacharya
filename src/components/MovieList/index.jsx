@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { PageLoader } from "components/commons";
 import MovieDetails from "components/MovieDetails";
@@ -26,6 +26,7 @@ const MovieList = () => {
     () => getFromLocalStorage(HISTORY_STORAGE_KEY) || []
   );
 
+  const searchInputRef = useRef(null);
   const itemRefs = useRef({});
 
   const debouncedSearchTerm = useDebounce(searchTerm);
@@ -35,6 +36,19 @@ const MovieList = () => {
 
   const movies = data?.Search || [];
   const hasError = data?.Response === "False";
+
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === "/" && document.activeElement !== searchInputRef.current) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleViewDetails = movie => {
     setSelectedMovieId(movie.imdbID);
@@ -68,8 +82,9 @@ const MovieList = () => {
             <Input
               autoFocus={false}
               className="w-full max-w-2xl rounded-md border-[#ddd] bg-white shadow-sm"
-              placeholder="Search any movie or series..."
+              placeholder="Search any movie or series... (press / to focus)"
               prefix={<Search className="text-gray-400" />}
+              ref={searchInputRef}
               size="large"
               type="search"
               value={searchTerm}
