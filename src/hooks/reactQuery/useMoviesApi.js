@@ -13,7 +13,7 @@ export const useFetchMovies = params =>
   useQuery({
     queryKey: ["movies", params],
     queryFn: () => moviesApi.fetch(params),
-    keepPreviousData: true,
+    keepPreviousData: false,
     onSuccess: data => {
       if (data?.Response === "False") {
         Toastr.error(data.Error);
