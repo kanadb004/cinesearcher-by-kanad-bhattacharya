@@ -62,7 +62,7 @@ const MovieDetails = ({ imdbID, onClose }) => {
               )}
             </div>
             <div className="w-full space-y-3 md:w-2/3">
-              <Typography className="leading-relaxed text-gray-500">
+              <Typography className="italic leading-relaxed text-gray-500">
                 {movie.Plot}
               </Typography>
               <Typography>
