@@ -1,15 +1,38 @@
-// eslint-disable-next-line import/extensions
+import { useState } from "react";
+
+/* eslint-disable import/extensions */
 import fallbackPoster from "assets/images/fallback-poster.svg";
+import starFilled from "assets/images/star-filled.png";
+import star from "assets/images/star.png";
+/* eslint-enable import/extensions */
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
-import { Modal, Typography } from "neetoui";
+import { Tooltip, Typography, Modal } from "neetoui";
+import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import "./index.css";
+
+const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const MovieDetails = ({ imdbID, onClose }) => {
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
+  const [isFavourite, setIsFavourite] = useState(() => {
+    const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
+
+    return favs.includes(imdbID);
+  });
+
   const isPosterValid = movie.Poster && movie.Poster !== "N/A";
+
+  const handleToggleFavourite = () => {
+    const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
+    const updated = isFavourite
+      ? favs.filter(id => id !== imdbID)
+      : [imdbID, ...favs];
+    setToLocalStorage(FAVOURITES_STORAGE_KEY, updated);
+    setIsFavourite(!isFavourite);
+  };
 
   return (
     <Modal
@@ -19,9 +42,28 @@ const MovieDetails = ({ imdbID, onClose }) => {
       onClose={onClose}
     >
       <Modal.Header>
-        <Typography style="h2" weight="bold">
-          {movie.Title}
-        </Typography>
+        <div className="flex items-center gap-3">
+          <Typography style="h2" weight="bold">
+            {movie.Title}
+          </Typography>
+          <Tooltip
+            position="right"
+            content={
+              isFavourite ? "Remove from favourites" : "Add to favourites"
+            }
+          >
+            <button
+              className="focus:outline-none flex items-center justify-center rounded p-1 transition-colors hover:bg-gray-100"
+              onClick={handleToggleFavourite}
+            >
+              <img
+                alt={isFavourite ? "Favourited Star" : "Unfavourited Star"}
+                className="h-5 w-5 object-contain"
+                src={isFavourite ? starFilled : star}
+              />
+            </button>
+          </Tooltip>
+        </div>
         <div className="flex flex-wrap gap-2 pb-2.5 pt-2.5">
           {movie.Genre &&
             movie.Genre.split(", ").map(genre => (
