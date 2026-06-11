@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const { pathname } = useLocation();
+  const { t } = useTranslation();
 
   return (
     <div className="flex items-center gap-8 border-b border-gray-200 bg-white px-8 py-4">
@@ -16,7 +18,7 @@ const Header = () => {
             pathname === "/movies" ? "text-blue-600" : "text-gray-600"
           }`}
         >
-          Home
+          {t("nav.home")}
         </Link>
         <Link
           to="/favourites"
@@ -24,7 +26,7 @@ const Header = () => {
             pathname === "/favourites" ? "text-blue-600" : "text-gray-600"
           }`}
         >
-          Favourites
+          {t("nav.favourites")}
         </Link>
       </nav>
     </div>

@@ -1,7 +1,9 @@
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
 import { Spinner } from "neetoui";
+import { useTranslation } from "react-i18next";
 
 const FavouriteItem = ({ imdbID }) => {
+  const { t } = useTranslation();
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
   if (isLoading) {
@@ -16,7 +18,9 @@ const FavouriteItem = ({ imdbID }) => {
     <div className="flex items-center justify-between rounded-lg border border-l-4 border-gray-300 bg-white px-6 py-4 shadow-sm">
       <span className="font-semibold text-gray-900">{movie.Title}</span>
       <span className="text-gray-500">
-        <span className="font-semibold text-gray-500">Rating: </span>
+        <span className="font-semibold text-gray-500">
+          {t("label.rating")}:{" "}
+        </span>
         {movie.imdbRating}/10
       </span>
     </div>

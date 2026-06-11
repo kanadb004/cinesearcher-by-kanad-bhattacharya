@@ -1,16 +1,17 @@
 import { NoData } from "neetoui";
+import withT from "utils/withT";
 
-const PageNotFound = () => (
+const PageNotFound = ({ t }) => (
   <div className="absolute left-1/3 top-1/3">
     <NoData
-      title="The page you're looking for can't be found"
+      title={t("pageNotFound.title")}
       primaryButtonProps={{
-        label: "Back to home",
         className: "bg-neutral-800 hover:bg-neutral-950",
+        label: t("pageNotFound.backHome"),
         to: "/movies",
       }}
     />
   </div>
 );
 
-export default PageNotFound;
+export default withT(PageNotFound);

@@ -1,0 +1,56 @@
+{
+  "title": "CineSearcher",
+  "nav": {
+    "home": "Home",
+    "favourites": "Favourites"
+  },
+  "label": {
+    "year": "Year",
+    "type": "Type",
+    "movie": "Movie",
+    "series": "Series",
+    "rating": "Rating",
+    "director": "Director",
+    "actors": "Actors",
+    "boxOffice": "Box Office",
+    "runtime": "Runtime",
+    "language": "Language",
+    "rated": "Rated",
+    "viewDetails": "View Details",
+    "clearAll": "Clear all"
+  },
+  "search": {
+    "placeholder": "Search any movie or series... (press / to focus)",
+    "noResults": "No movie or series found"
+  },
+  "movieDetails": {
+    "addToFavourites": "Add to favourites",
+    "removeFromFavourites": "Remove from favourites",
+    "favouritedStarAlt": "Favourited Star",
+    "unfavouritedStarAlt": "Unfavourited Star"
+  },
+  "viewHistory": {
+    "title": "View history",
+    "removeItem": {
+      "title": "Remove from history?",
+      "message": "You are removing <strong>{{title}}</strong> from view history. Do you want to continue?",
+      "confirm": "Yes, remove"
+    },
+    "clearAll": {
+      "title": "Clear view history?",
+      "message": "You are about to clear all view history. Do you want to continue?",
+      "confirm": "Yes, clear all"
+    }
+  },
+  "favourites": {
+    "empty": "No favourites yet!"
+  },
+  "filter": {
+    "yearPlaceholder": "e.g. 2026",
+    "yearValidation": "Year must be between 1900 and {{maxYear}}"
+  },
+  "pageNotFound": {
+    "title": "The page you're looking for can't be found",
+    "backHome": "Back to home"
+  }
+}
