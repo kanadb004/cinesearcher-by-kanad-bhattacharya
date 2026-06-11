@@ -38,6 +38,7 @@ const MovieList = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterValues, setFilterValues] = useState(FILTER_INITIAL_VALUES);
+  const [areImagesLoaded, setAreImagesLoaded] = useState(false);
   const [activeHistoryId, setActiveHistoryId] = useState(
     () => getFromLocalStorage(ACTIVE_ID_STORAGE_KEY) || null
   );
@@ -62,6 +63,56 @@ const MovieList = () => {
   const movies = data?.Search || [];
   const hasError = data?.Response === "False";
   const totalResults = Number(data?.totalResults) || 0;
+
+  useEffect(() => {
+    if (isLoading) setAreImagesLoaded(false);
+  }, [isLoading]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (isLoading) {
+      return () => {};
+    }
+
+    if (!movies.length) {
+      setAreImagesLoaded(true);
+
+      return () => {};
+    }
+
+    const posters = movies
+      .map(movie => movie.Poster)
+      .filter(poster => poster && poster !== "N/A");
+
+    if (!posters.length) {
+      setAreImagesLoaded(true);
+
+      return () => {};
+    }
+
+    let remaining = posters.length;
+
+    posters.forEach(src => {
+      const img = new Image();
+
+      img.onload = img.onerror = () => {
+        if (cancelled) return;
+
+        remaining -= 1;
+
+        if (remaining === 0) {
+          setAreImagesLoaded(true);
+        }
+      };
+
+      img.src = src;
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [movies, isLoading]);
 
   const handleFilterChange = useCallback(newFilterValues => {
     setFilterValues(newFilterValues);
@@ -136,6 +187,8 @@ const MovieList = () => {
     setToLocalStorage(HISTORY_STORAGE_KEY, updatedHistory);
   };
 
+  const showLoader = isLoading || !areImagesLoaded;
+
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f5f5]">
       <Header />
@@ -187,7 +240,7 @@ const MovieList = () => {
             </div>
             {
               // eslint-disable-next-line no-nested-ternary
-              isLoading ? (
+              showLoader ? (
                 <PageLoader />
               ) : hasError || isEmpty(movies) ? (
                 <div className="flex h-full w-full items-center justify-center pt-20">
@@ -206,7 +259,7 @@ const MovieList = () => {
               )
             }
           </div>
-          {!hasError && totalResults > DEFAULT_PAGE_SIZE && (
+          {!showLoader && !hasError && totalResults > DEFAULT_PAGE_SIZE && (
             <div className="mb-5 mt-8 self-end pr-6">
               <Pagination
                 count={totalResults}

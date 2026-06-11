@@ -7,7 +7,7 @@ import star from "assets/images/star.png";
 /* eslint-enable import/extensions */
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
-import { Tooltip, Typography, Modal } from "neetoui";
+import { Modal, Tooltip, Typography } from "neetoui";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import "./index.css";
@@ -46,23 +46,25 @@ const MovieDetails = ({ imdbID, onClose }) => {
           <Typography style="h2" weight="bold">
             {movie.Title}
           </Typography>
-          <Tooltip
-            position="right"
-            content={
-              isFavourite ? "Remove from favourites" : "Add to favourites"
-            }
-          >
-            <button
-              className="focus:outline-none flex items-center justify-center rounded p-1 transition-colors hover:bg-gray-100"
-              onClick={handleToggleFavourite}
+          {!isLoading && (
+            <Tooltip
+              position="right"
+              content={
+                isFavourite ? "Remove from favourites" : "Add to favourites"
+              }
             >
-              <img
-                alt={isFavourite ? "Favourited Star" : "Unfavourited Star"}
-                className="h-5 w-5 object-contain"
-                src={isFavourite ? starFilled : star}
-              />
-            </button>
-          </Tooltip>
+              <button
+                className="focus:outline-none flex items-center justify-center rounded p-1 transition-colors hover:bg-gray-100"
+                onClick={handleToggleFavourite}
+              >
+                <img
+                  alt={isFavourite ? "Favourited Star" : "Unfavourited Star"}
+                  className="h-5 w-5 object-contain"
+                  src={isFavourite ? starFilled : star}
+                />
+              </button>
+            </Tooltip>
+          )}
         </div>
         <div className="flex flex-wrap gap-2 pb-2.5 pt-2.5">
           {movie.Genre &&
