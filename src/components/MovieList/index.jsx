@@ -198,7 +198,7 @@ const MovieList = () => {
         <div className="flex flex-1 flex-col items-center py-10">
           <div className="w-full max-w-5xl space-y-10 px-6">
             <div className="flex justify-center">
-              <div className="relative flex w-full max-w-2xl items-center gap-3">
+              <div className="relative flex w-full items-center gap-3">
                 <Input
                   autoFocus={false}
                   className="flex-1 rounded-md border-[#ddd] bg-white shadow-sm"
@@ -282,12 +282,11 @@ const MovieList = () => {
           />
         </div>
       </div>
-      {selectedMovieId && (
-        <MovieDetails
-          imdbID={selectedMovieId}
-          onClose={() => setSelectedMovieId(null)}
-        />
-      )}
+      <MovieDetails
+        imdbID={selectedMovieId}
+        isOpen={!!selectedMovieId}
+        onClose={() => setSelectedMovieId(null)}
+      />
     </div>
   );
 };

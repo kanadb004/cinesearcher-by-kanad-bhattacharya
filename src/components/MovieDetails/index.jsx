@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* eslint-disable import/extensions */
 import fallbackPoster from "assets/images/fallback-poster.svg";
@@ -15,15 +15,27 @@ import "./index.css";
 
 const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
-const MovieDetails = ({ imdbID, onClose }) => {
+const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { t } = useTranslation();
-  const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
+  //   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
+  const { data: movie = {}, isLoading } = useShowMovie(
+    { id: imdbID },
+    { enabled: !!imdbID }
+  );
 
-  const [isFavourite, setIsFavourite] = useState(() => {
+  //   const [isFavourite, setIsFavourite] = useState(() => {
+  //     const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
+
+  //     return favs.includes(imdbID);
+  //   });
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  useEffect(() => {
+    if (!imdbID) return;
+
     const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
-
-    return favs.includes(imdbID);
-  });
+    setIsFavourite(favs.includes(imdbID));
+  }, [imdbID]);
 
   const isPosterValid = movie.Poster && movie.Poster !== "N/A";
 
@@ -38,8 +50,8 @@ const MovieDetails = ({ imdbID, onClose }) => {
 
   return (
     <Modal
-      isOpen
       className="movie-details-modal max-h-[70vh] overflow-y-auto"
+      isOpen={isOpen}
       size="large"
       onClose={onClose}
     >

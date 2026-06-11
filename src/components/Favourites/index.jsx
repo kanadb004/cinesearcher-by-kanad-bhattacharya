@@ -20,7 +20,7 @@ const Favourites = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="mx-auto max-w-3xl p-8">
+      <div className="mx-auto max-w-5xl p-8">
         <div className="max-h-[80vh] space-y-3 overflow-y-auto">
           {favourites.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
