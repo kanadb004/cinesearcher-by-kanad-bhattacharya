@@ -23,7 +23,6 @@ const Header = () => {
           className={`font-medium ${
             pathname === "/favourites" ? "text-blue-600" : "text-gray-600"
           }`}
-          onClick={() => console.log("clicked favourites")}
         >
           Favourites
         </Link>
