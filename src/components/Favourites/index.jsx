@@ -9,8 +9,6 @@ import FavouriteItem from "./FavouriteItem";
 const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const Favourites = () => {
-  console.log("favourites render");
-
   // eslint-disable-next-line react/hook-use-state
   const [favourites] = useState(
     () => getFromLocalStorage(FAVOURITES_STORAGE_KEY) || []
