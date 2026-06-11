@@ -67,6 +67,26 @@ const MovieList = () => {
     setFilterValues(newFilterValues);
   }, []);
 
+  const handleDeleteHistoryItem = useCallback(
+    imdbID => {
+      const updated = viewHistory.filter(item => item.imdbID !== imdbID);
+      setViewHistory(updated);
+      setToLocalStorage(HISTORY_STORAGE_KEY, updated);
+      if (activeHistoryId === imdbID) {
+        setActiveHistoryId(null);
+        setToLocalStorage(ACTIVE_ID_STORAGE_KEY, null);
+      }
+    },
+    [viewHistory, activeHistoryId]
+  );
+
+  const handleClearHistory = useCallback(() => {
+    setViewHistory([]);
+    setToLocalStorage(HISTORY_STORAGE_KEY, []);
+    setActiveHistoryId(null);
+    setToLocalStorage(ACTIVE_ID_STORAGE_KEY, null);
+  }, []);
+
   useEffect(() => {
     setSearchKey(searchTerm);
   }, [searchTerm]);
@@ -171,10 +191,7 @@ const MovieList = () => {
                 <PageLoader />
               ) : hasError || isEmpty(movies) ? (
                 <div className="flex h-full w-full items-center justify-center pt-20">
-                  <NoData
-                    // description={data?.Error}
-                    title="No movie or series found"
-                  />
+                  <NoData title="No movie or series found" />
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -205,6 +222,8 @@ const MovieList = () => {
             activeId={activeHistoryId}
             history={viewHistory}
             itemRefs={itemRefs}
+            onClearAll={handleClearHistory}
+            onDeleteItem={handleDeleteHistoryItem}
           />
         </div>
       </div>
