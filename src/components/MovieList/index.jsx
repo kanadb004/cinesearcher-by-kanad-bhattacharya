@@ -62,7 +62,7 @@ const MovieList = () => {
     type: getTypeParam(filterValues),
   });
 
-  const movies = data?.Search || [];
+  const movies = data?.Search;
   const hasError = data?.Response === "False";
   const totalResults = Number(data?.totalResults) || 0;
 
@@ -77,7 +77,7 @@ const MovieList = () => {
       return () => {};
     }
 
-    if (!movies.length) {
+    if (!movies?.length) {
       setAreImagesLoaded(true);
 
       return () => {};
