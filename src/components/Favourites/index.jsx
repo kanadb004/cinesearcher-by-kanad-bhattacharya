@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Header } from "components/commons";
 import { NoData } from "neetoui";
+import { useTranslation } from "react-i18next";
 import { getFromLocalStorage } from "utils/storage";
 
 import FavouriteItem from "./FavouriteItem";
@@ -9,6 +10,8 @@ import FavouriteItem from "./FavouriteItem";
 const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const Favourites = () => {
+  const { t } = useTranslation();
+
   // eslint-disable-next-line react/hook-use-state
   const [favourites] = useState(
     () => getFromLocalStorage(FAVOURITES_STORAGE_KEY) || []
@@ -21,7 +24,7 @@ const Favourites = () => {
         <div className="max-h-[80vh] space-y-3 overflow-y-auto">
           {favourites.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <NoData title="No favourites yet!" />
+              <NoData title={t("favourites.empty")} />
             </div>
           ) : (
             favourites.map(imdbID => (

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Delete } from "neetoicons";
 import { Alert, Button, Typography } from "neetoui";
+import { Trans, useTranslation } from "react-i18next";
 
 const ViewHistory = ({
   history,
@@ -10,6 +11,7 @@ const ViewHistory = ({
   onDeleteItem,
   onClearAll,
 }) => {
+  const { t } = useTranslation();
   const [showClearAllAlert, setShowClearAllAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
@@ -17,12 +19,12 @@ const ViewHistory = ({
     <div className="w-64 flex-shrink-0">
       <div className="mb-4 flex items-center justify-between">
         <Typography style="h3" weight="bold">
-          View history
+          {t("viewHistory.title")}
         </Typography>
         {history.length > 0 && (
           <Button
             className="text-red-500 hover:text-red-600"
-            label="Clear all"
+            label={t("label.clearAll")}
             style="text"
             onClick={() => setShowClearAllAlert(true)}
           />
@@ -60,12 +62,15 @@ const ViewHistory = ({
       </div>
       <Alert
         isOpen={!!itemToDelete}
-        submitButtonLabel="Yes, remove"
-        title="Remove from history?"
+        submitButtonLabel={t("viewHistory.removeItem.confirm")}
+        title={t("viewHistory.removeItem.title")}
         message={
           <Typography>
-            You are removing <strong>{itemToDelete?.Title}</strong> from view
-            history. Do you want to continue?
+            <Trans
+              components={{ strong: <strong /> }}
+              i18nKey="viewHistory.removeItem.message"
+              values={{ title: itemToDelete?.Title }}
+            />
           </Typography>
         }
         onClose={() => setItemToDelete(null)}
@@ -76,13 +81,9 @@ const ViewHistory = ({
       />
       <Alert
         isOpen={showClearAllAlert}
-        submitButtonLabel="Yes, clear all"
-        title="Clear view history?"
-        message={
-          <Typography>
-            You are about to clear all view history. Do you want to continue?
-          </Typography>
-        }
+        message={<Typography>{t("viewHistory.clearAll.message")}</Typography>}
+        submitButtonLabel={t("viewHistory.clearAll.confirm")}
+        title={t("viewHistory.clearAll.title")}
         onClose={() => setShowClearAllAlert(false)}
         onSubmit={() => {
           onClearAll();

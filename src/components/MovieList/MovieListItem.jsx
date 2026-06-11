@@ -4,10 +4,12 @@ import { memo } from "react";
 import fallbackPoster from "assets/images/fallback-poster.svg";
 import { FallbackImage } from "components/commons";
 import { Button, Typography } from "neetoui";
+import { useTranslation } from "react-i18next";
 
 import "./MovieListItem.css";
 
 const MovieListItem = ({ Poster, Title, Type, Year, onViewDetails }) => {
+  const { t } = useTranslation();
   const isPosterValid = Poster && Poster !== "N/A";
 
   return (
@@ -36,7 +38,7 @@ const MovieListItem = ({ Poster, Title, Type, Year, onViewDetails }) => {
       </div>
       <Button
         className="view-details-btn mt-4 self-start bg-white"
-        label="View Details"
+        label={t("label.viewDetails")}
         style="secondary"
         onClick={onViewDetails}
       />

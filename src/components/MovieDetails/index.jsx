@@ -8,6 +8,7 @@ import star from "assets/images/star.png";
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
 import { Modal, Tooltip, Typography } from "neetoui";
+import { useTranslation } from "react-i18next";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import "./index.css";
@@ -15,6 +16,7 @@ import "./index.css";
 const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const MovieDetails = ({ imdbID, onClose }) => {
+  const { t } = useTranslation();
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
   const [isFavourite, setIsFavourite] = useState(() => {
@@ -50,7 +52,9 @@ const MovieDetails = ({ imdbID, onClose }) => {
             <Tooltip
               position="right"
               content={
-                isFavourite ? "Remove from favourites" : "Add to favourites"
+                isFavourite
+                  ? t("movieDetails.removeFromFavourites")
+                  : t("movieDetails.addToFavourites")
               }
             >
               <button
@@ -58,9 +62,13 @@ const MovieDetails = ({ imdbID, onClose }) => {
                 onClick={handleToggleFavourite}
               >
                 <img
-                  alt={isFavourite ? "Favourited Star" : "Unfavourited Star"}
                   className="h-5 w-5 object-contain"
                   src={isFavourite ? starFilled : star}
+                  alt={
+                    isFavourite
+                      ? t("movieDetails.favouritedStarAlt")
+                      : t("movieDetails.unfavouritedStarAlt")
+                  }
                 />
               </button>
             </Tooltip>
@@ -74,8 +82,8 @@ const MovieDetails = ({ imdbID, onClose }) => {
                 style={{
                   background: "#f0f0f0",
                   borderRadius: "4px",
-                  padding: "2px 8px",
                   fontSize: "13px",
+                  padding: "2px 8px",
                 }}
               >
                 {genre}
@@ -110,25 +118,25 @@ const MovieDetails = ({ imdbID, onClose }) => {
                 {movie.Plot}
               </Typography>
               <Typography>
-                <strong>Director:</strong> {movie.Director}
+                <strong>{t("label.director")}:</strong> {movie.Director}
               </Typography>
               <Typography>
-                <strong>Actors:</strong> {movie.Actors}
+                <strong>{t("label.actors")}:</strong> {movie.Actors}
               </Typography>
               <Typography>
-                <strong>Box Office:</strong> {movie.BoxOffice}
+                <strong>{t("label.boxOffice")}:</strong> {movie.BoxOffice}
               </Typography>
               <Typography>
-                <strong>Year:</strong> {movie.Year}
+                <strong>{t("label.year")}:</strong> {movie.Year}
               </Typography>
               <Typography>
-                <strong>Runtime:</strong> {movie.Runtime}
+                <strong>{t("label.runtime")}:</strong> {movie.Runtime}
               </Typography>
               <Typography>
-                <strong>Language:</strong> {movie.Language}
+                <strong>{t("label.language")}:</strong> {movie.Language}
               </Typography>
               <Typography>
-                <strong>Rated:</strong> {movie.Rated}
+                <strong>{t("label.rated")}:</strong> {movie.Rated}
               </Typography>
             </div>
           </div>

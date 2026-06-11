@@ -7,6 +7,7 @@ import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
 import { Filter, Search } from "neetoicons";
 import { Input, NoData, Pagination } from "neetoui";
 import { isEmpty } from "ramda";
+import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
@@ -27,6 +28,7 @@ const getTypeParam = ({ movie, series }) => {
 };
 
 const MovieList = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const routerHistory = useHistory();
 
@@ -200,7 +202,7 @@ const MovieList = () => {
                 <Input
                   autoFocus={false}
                   className="flex-1 rounded-md border-[#ddd] bg-white shadow-sm"
-                  placeholder="Search any movie or series... (press / to focus)"
+                  placeholder={t("search.placeholder")}
                   prefix={<Search className="text-gray-400" />}
                   ref={searchInputRef}
                   size="large"
@@ -244,7 +246,7 @@ const MovieList = () => {
                 <PageLoader />
               ) : hasError || isEmpty(movies) ? (
                 <div className="flex h-full w-full items-center justify-center pt-20">
-                  <NoData title="No movie or series found" />
+                  <NoData title={t("search.noResults")} />
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 
 import { useFormikContext } from "formik";
+import { t } from "i18next";
 import { Close } from "neetoicons";
 import { Checkbox, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
+import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 
 import "./FilterDropdown.css";
@@ -17,7 +19,7 @@ const FILTER_VALIDATION_SCHEMA = yup.object().shape({
     .string()
     .test(
       "valid-year-range",
-      `Year must be between 1900 and ${CURRENT_YEAR + 2}`,
+      t("filter.yearValidation", { maxYear: CURRENT_YEAR + 2 }),
       value => {
         if (!value || value.length < 4) return true;
         const num = parseInt(value, 10);
@@ -28,6 +30,7 @@ const FILTER_VALIDATION_SCHEMA = yup.object().shape({
 });
 
 const FilterForm = ({ onClose, onFilterChange }) => {
+  const { t: translate } = useTranslation();
   const { values, setFieldValue, errors } = useFormikContext();
 
   useEffect(() => {
@@ -47,10 +50,10 @@ const FilterForm = ({ onClose, onFilterChange }) => {
       </button>
       <div className="filter-dropdown space-y-4">
         <Input
-          label="Year"
+          label={translate("label.year")}
           maxLength={4}
           name="year"
-          placeholder="e.g. 2026"
+          placeholder={translate("filter.yearPlaceholder")}
           showCount={false}
           onKeyDown={e => {
             if (
@@ -69,17 +72,17 @@ const FilterForm = ({ onClose, onFilterChange }) => {
         />
         <div>
           <Typography className="mb-3 font-semibold" style="body1">
-            Type
+            {translate("label.type")}
           </Typography>
           <div className="flex gap-6">
             <Checkbox
               checked={values.movie}
-              label="Movie"
+              label={translate("label.movie")}
               onChange={() => setFieldValue("movie", !values.movie)}
             />
             <Checkbox
               checked={values.series}
-              label="Series"
+              label={translate("label.series")}
               onChange={() => setFieldValue("series", !values.series)}
             />
           </div>
