@@ -1,8 +1,9 @@
-import { BASE_URL } from "constants";
+import { BASE_URL } from "constants/apis";
 
 import { useState } from "react";
 
 import { Header, PageLoader } from "components/commons";
+import { FILTER_INITIAL_VALUES } from "components/FilterDropdown/constants";
 import MovieDetails from "components/MovieDetails";
 import ViewHistory from "components/ViewHistory";
 import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
@@ -12,7 +13,6 @@ import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
 
-import { FILTER_INITIAL_VALUES } from "./FilterDropdown";
 import MovieListItem from "./MovieListItem";
 import SearchBar from "./SearchBar";
 

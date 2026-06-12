@@ -1,4 +1,4 @@
-import { BASE_URL } from "constants";
+import { BASE_URL } from "constants/apis";
 
 import { Route, Switch, Redirect } from "react-router-dom";
 

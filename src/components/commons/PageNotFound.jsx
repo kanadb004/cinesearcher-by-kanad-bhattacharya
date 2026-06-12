@@ -1,4 +1,4 @@
-import { BASE_URL } from "constants";
+import { BASE_URL } from "constants/apis";
 
 import { NoData } from "neetoui";
 import withT from "utils/withT";

@@ -31,6 +31,7 @@
   },
   "viewHistory": {
     "title": "View history",
+    "empty": "No view history yet",
     "removeItem": {
       "title": "Remove from history?",
       "message": "You are removing <strong>{{title}}</strong> from view history. Do you want to continue?",
@@ -43,7 +44,7 @@
     }
   },
   "favourites": {
-    "empty": "No favourites yet!"
+    "empty": "No favourites yet"
   },
   "filter": {
     "yearPlaceholder": "e.g. 2026",

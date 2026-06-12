@@ -1,3 +1,13 @@
 .clear-all-btn:hover {
     color: red !important;
 }
+
+.history-item {
+  background-color: #e4e4f8;
+  color: inherit;
+}
+
+.history-item.active {
+  background-color: #2f62ff;
+  color: #fff;
+}

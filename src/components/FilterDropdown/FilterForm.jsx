@@ -1,43 +1,50 @@
 import { useEffect } from "react";
 
 import { useFormikContext } from "formik";
-import { t } from "i18next";
 import { Close } from "neetoicons";
 import { Checkbox, Typography } from "neetoui";
-import { Form as NeetoUIForm, Input } from "neetoui/formik";
+import { Input } from "neetoui/formik";
 import { useTranslation } from "react-i18next";
-import * as yup from "yup";
-
-import "./FilterDropdown.css";
-
-const FILTER_INITIAL_VALUES = { year: "", movie: true, series: true };
-
-const CURRENT_YEAR = new Date().getFullYear();
-
-const FILTER_VALIDATION_SCHEMA = yup.object().shape({
-  year: yup
-    .string()
-    .test(
-      "valid-year-range",
-      t("filter.yearValidation", { maxYear: CURRENT_YEAR + 2 }),
-      value => {
-        if (!value || value.length < 4) return true;
-        const num = parseInt(value, 10);
-
-        return num >= 1900 && num <= CURRENT_YEAR + 2;
-      }
-    ),
-});
 
 const FilterForm = ({ onClose, onFilterChange }) => {
-  const { t: translate } = useTranslation();
+  const { t } = useTranslation();
   const { values, setFieldValue, errors } = useFormikContext();
 
   useEffect(() => {
     const effectiveYear =
       values.year.length === 4 && !errors.year ? values.year : "";
-    onFilterChange({ ...values, year: effectiveYear });
+
+    onFilterChange({
+      ...values,
+      year: effectiveYear,
+    });
   }, [values, errors, onFilterChange]);
+
+  const handleMovieChange = () => {
+    const nextMovie = !values.movie;
+
+    if (!nextMovie && !values.series) {
+      setFieldValue("movie", true);
+      setFieldValue("series", true);
+
+      return;
+    }
+
+    setFieldValue("movie", nextMovie);
+  };
+
+  const handleSeriesChange = () => {
+    const nextSeries = !values.series;
+
+    if (!values.movie && !nextSeries) {
+      setFieldValue("movie", true);
+      setFieldValue("series", true);
+
+      return;
+    }
+
+    setFieldValue("series", nextSeries);
+  };
 
   return (
     <div className="relative w-64 rounded-lg bg-white p-5 shadow-lg">
@@ -50,10 +57,10 @@ const FilterForm = ({ onClose, onFilterChange }) => {
       </button>
       <div className="filter-dropdown space-y-4">
         <Input
-          label={translate("label.year")}
+          label={t("label.year")}
           maxLength={4}
           name="year"
-          placeholder={translate("filter.yearPlaceholder")}
+          placeholder={t("filter.yearPlaceholder")}
           showCount={false}
           onKeyDown={e => {
             if (
@@ -72,18 +79,18 @@ const FilterForm = ({ onClose, onFilterChange }) => {
         />
         <div>
           <Typography className="mb-3 font-semibold" style="body1">
-            {translate("label.type")}
+            {t("label.type")}
           </Typography>
           <div className="flex gap-6">
             <Checkbox
               checked={values.movie}
-              label={translate("label.movie")}
-              onChange={() => setFieldValue("movie", !values.movie)}
+              label={t("label.movie")}
+              onChange={handleMovieChange}
             />
             <Checkbox
               checked={values.series}
-              label={translate("label.series")}
-              onChange={() => setFieldValue("series", !values.series)}
+              label={t("label.series")}
+              onChange={handleSeriesChange}
             />
           </div>
         </div>
@@ -92,19 +99,4 @@ const FilterForm = ({ onClose, onFilterChange }) => {
   );
 };
 
-const FilterDropdown = ({ initialValues, onClose, onFilterChange }) => (
-  <NeetoUIForm
-    formProps={{ noValidate: true }}
-    formikProps={{
-      initialValues: initialValues || FILTER_INITIAL_VALUES,
-      validationSchema: FILTER_VALIDATION_SCHEMA,
-      onSubmit: () => {},
-    }}
-  >
-    <FilterForm onClose={onClose} onFilterChange={onFilterChange} />
-  </NeetoUIForm>
-);
-
-export { FILTER_INITIAL_VALUES };
-
-export default FilterDropdown;
+export default FilterForm;

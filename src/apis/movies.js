@@ -1,4 +1,4 @@
-import { OMDB_API_KEY, OMDB_API_URL } from "constants";
+import { OMDB_API_KEY, OMDB_API_URL } from "constants/apis";
 
 import axios from "axios";
 

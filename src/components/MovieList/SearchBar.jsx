@@ -1,15 +1,14 @@
-import { BASE_URL } from "constants";
+import { BASE_URL } from "constants/apis";
 
 import { useState, useEffect, useRef } from "react";
 
+import FilterDropdown from "components/FilterDropdown";
 import { Filter, Search } from "neetoicons";
 import { Input } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-import FilterDropdown from "./FilterDropdown";
-
-const DEFAULT_PAGE_INDEX = 1;
+import { DEFAULT_PAGE_INDEX } from "./constants";
 
 const SearchBar = ({ searchTerm, filterValues, onFilterChange }) => {
   const { t } = useTranslation();

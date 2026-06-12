@@ -1,3 +1,5 @@
+import { FAVOURITES_STORAGE_KEY } from "constants/favourites";
+
 import { useState, useEffect } from "react";
 
 /* eslint-disable import/extensions */
@@ -7,13 +9,11 @@ import star from "assets/images/star.png";
 /* eslint-enable import/extensions */
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
-import { Modal, Tooltip, Typography } from "neetoui";
+import { Modal, Button, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import "./index.css";
-
-const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { t } = useTranslation();
@@ -52,18 +52,10 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
             {movie.Title}
           </Typography>
           {!isLoading && (
-            <Tooltip
-              position="right"
-              content={
-                isFavourite
-                  ? t("movieDetails.removeFromFavourites")
-                  : t("movieDetails.addToFavourites")
-              }
-            >
-              <button
-                className="focus:outline-none flex items-center justify-center rounded p-1 transition-colors hover:bg-gray-100"
-                onClick={handleToggleFavourite}
-              >
+            <Button
+              className="focus:outline-none rounded p-1 transition-colors hover:bg-gray-100"
+              style="text"
+              icon={() => (
                 <img
                   className="h-5 w-5 object-contain"
                   src={isFavourite ? starFilled : star}
@@ -73,8 +65,15 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
                       : t("movieDetails.unfavouritedStarAlt")
                   }
                 />
-              </button>
-            </Tooltip>
+              )}
+              tooltipProps={{
+                content: isFavourite
+                  ? t("movieDetails.removeFromFavourites")
+                  : t("movieDetails.addToFavourites"),
+                position: "right",
+              }}
+              onClick={handleToggleFavourite}
+            />
           )}
         </div>
         <div className="flex flex-wrap gap-2 pb-2.5 pt-2.5">

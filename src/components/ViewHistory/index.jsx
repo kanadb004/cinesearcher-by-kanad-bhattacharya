@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Delete } from "neetoicons";
 import { Alert, Button, Typography } from "neetoui";
+import { isEmpty } from "ramda";
 import { Trans, useTranslation } from "react-i18next";
 
 import "./index.css";
@@ -23,7 +24,7 @@ const ViewHistory = ({
         <Typography style="h3" weight="bold">
           {t("viewHistory.title")}
         </Typography>
-        {history.length > 0 && (
+        {!isEmpty(history) && (
           <Button
             className="clear-all-btn text-red-500 hover:text-red-600"
             label={t("label.clearAll")}
@@ -33,34 +34,38 @@ const ViewHistory = ({
         )}
       </div>
       <div className="flex flex-col gap-2 overflow-y-auto">
-        {history.map(({ imdbID, Title }) => (
-          <div
-            className="flex items-center justify-between rounded-md px-4 py-2"
-            key={imdbID}
-            ref={el => {
-              itemRefs.current[imdbID] = el;
-            }}
-            style={{
-              background: activeId === imdbID ? "#2f62ff" : "#E4E4F8",
-              color: activeId === imdbID ? "#fff" : "inherit",
-            }}
-          >
-            <Typography
-              className="flex-1 text-center"
-              style="body2"
-              weight={activeId === imdbID ? "semibold" : "normal"}
+        {isEmpty(history) ? (
+          <Typography className="mt-4 text-gray-500" style="body2">
+            {t("viewHistory.empty")}
+          </Typography>
+        ) : (
+          history.map(({ imdbID, Title }) => (
+            <div
+              key={imdbID}
+              className={`history-item flex items-center justify-between rounded-md px-4 py-2 ${
+                activeId === imdbID ? "active" : ""
+              }`}
+              ref={el => {
+                itemRefs.current[imdbID] = el;
+              }}
             >
-              {Title}
-            </Typography>
-            <button
-              className="ml-1 flex-shrink-0 cursor-pointer opacity-60 hover:opacity-100"
-              type="button"
-              onClick={() => setItemToDelete({ imdbID, Title })}
-            >
-              <Delete size={20} />
-            </button>
-          </div>
-        ))}
+              <Typography
+                className="flex-1 text-center"
+                style="body2"
+                weight={activeId === imdbID ? "semibold" : "normal"}
+              >
+                {Title}
+              </Typography>
+              <button
+                className="ml-1 flex-shrink-0 cursor-pointer opacity-60 hover:opacity-100"
+                type="button"
+                onClick={() => setItemToDelete({ imdbID, Title })}
+              >
+                <Delete size={20} />
+              </button>
+            </div>
+          ))
+        )}
       </div>
       <Alert
         isOpen={!!itemToDelete}

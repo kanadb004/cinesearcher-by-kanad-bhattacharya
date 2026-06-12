@@ -1,11 +1,18 @@
-import { BASE_URL } from "constants";
+import { BASE_URL } from "constants/apis";
 
+import classNames from "classnames";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
+
+  const getNavLinkClass = path =>
+    classNames("font-medium", {
+      "text-blue-600": pathname === path,
+      "text-gray-600": pathname !== path,
+    });
 
   return (
     <div className="flex items-center gap-8 border-b border-gray-200 bg-white px-8 py-4">
@@ -15,20 +22,14 @@ const Header = () => {
       </div>
       <nav className="flex gap-6">
         <Link
+          className={getNavLinkClass(`${BASE_URL}movies`)}
           to={`${BASE_URL}movies`}
-          className={`font-medium ${
-            pathname === `${BASE_URL}movies` ? "text-blue-600" : "text-gray-600"
-          }`}
         >
           {t("nav.home")}
         </Link>
         <Link
+          className={getNavLinkClass(`${BASE_URL}favourites`)}
           to={`${BASE_URL}favourites`}
-          className={`font-medium ${
-            pathname === `${BASE_URL}favourites`
-              ? "text-blue-600"
-              : "text-gray-600"
-          }`}
         >
           {t("nav.favourites")}
         </Link>
