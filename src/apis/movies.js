@@ -1,9 +1,11 @@
+import { OMDB_API_KEY, OMDB_API_URL } from "constants";
+
 import axios from "axios";
 
 const show = async ({ id, plot = "short" }) => {
-  const response = await axios.get("https://www.omdbapi.com/", {
+  const response = await axios.get(OMDB_API_URL, {
     params: {
-      apikey: process.env.REACT_APP_OMDB_API_KEY,
+      apikey: OMDB_API_KEY,
       i: id,
       plot,
     },
@@ -13,9 +15,9 @@ const show = async ({ id, plot = "short" }) => {
 };
 
 const fetch = async ({ searchTerm, type, year, page = 1 }) => {
-  const response = await axios.get("https://www.omdbapi.com/", {
+  const response = await axios.get(OMDB_API_URL, {
     params: {
-      apikey: process.env.REACT_APP_OMDB_API_KEY,
+      apikey: OMDB_API_KEY,
       s: searchTerm,
       type,
       y: year,

@@ -4,6 +4,8 @@ import { Delete } from "neetoicons";
 import { Alert, Button, Typography } from "neetoui";
 import { Trans, useTranslation } from "react-i18next";
 
+import "./index.css";
+
 const ViewHistory = ({
   history,
   activeId,
@@ -23,7 +25,7 @@ const ViewHistory = ({
         </Typography>
         {history.length > 0 && (
           <Button
-            className="text-red-500 hover:text-red-600"
+            className="clear-all-btn text-red-500 hover:text-red-600"
             label={t("label.clearAll")}
             style="text"
             onClick={() => setShowClearAllAlert(true)}

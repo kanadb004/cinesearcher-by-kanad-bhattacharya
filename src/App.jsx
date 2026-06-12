@@ -1,3 +1,5 @@
+import { BASE_URL } from "constants";
+
 import { Route, Switch, Redirect } from "react-router-dom";
 
 import "./App.css";
@@ -7,9 +9,9 @@ import MovieList from "./components/MovieList";
 
 const App = () => (
   <Switch>
-    <Route exact component={MovieList} path="/movies" />
-    <Route exact component={Favourites} path="/favourites" />
-    <Redirect exact from="/" to="/movies" />
+    <Route exact component={MovieList} path={`${BASE_URL}movies`} />
+    <Route exact component={Favourites} path={`${BASE_URL}favourites`} />
+    <Redirect exact from={BASE_URL} to={`${BASE_URL}movies`} />
     <Route component={PageNotFound} path="*" />
   </Switch>
 );

@@ -1,3 +1,5 @@
+import { BASE_URL } from "constants";
+
 import { useState } from "react";
 
 import { Header, PageLoader } from "components/commons";
@@ -62,7 +64,7 @@ const MovieList = () => {
   const handlePageNavigation = newPage => {
     const params = new URLSearchParams(location.search);
     params.set("page", newPage);
-    routerHistory.replace(`/movies?${params.toString()}`);
+    routerHistory.replace(`${BASE_URL}movies?${params.toString()}`);
   };
 
   const showLoader = isLoading || !areImagesLoaded;

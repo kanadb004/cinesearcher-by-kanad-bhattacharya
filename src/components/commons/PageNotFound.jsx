@@ -1,3 +1,5 @@
+import { BASE_URL } from "constants";
+
 import { NoData } from "neetoui";
 import withT from "utils/withT";
 
@@ -8,7 +10,7 @@ const PageNotFound = ({ t }) => (
       primaryButtonProps={{
         className: "bg-neutral-800 hover:bg-neutral-950",
         label: t("pageNotFound.backHome"),
-        to: "/movies",
+        to: `${BASE_URL}movies`,
       }}
     />
   </div>

@@ -96,7 +96,7 @@ const FilterDropdown = ({ initialValues, onClose, onFilterChange }) => (
   <NeetoUIForm
     formProps={{ noValidate: true }}
     formikProps={{
-      initialValues: initialValues ?? FILTER_INITIAL_VALUES,
+      initialValues: initialValues || FILTER_INITIAL_VALUES,
       validationSchema: FILTER_VALIDATION_SCHEMA,
       onSubmit: () => {},
     }}

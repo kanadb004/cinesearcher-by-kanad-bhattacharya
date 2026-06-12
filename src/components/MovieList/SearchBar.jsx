@@ -1,3 +1,5 @@
+import { BASE_URL } from "constants";
+
 import { useState, useEffect, useRef } from "react";
 
 import { Filter, Search } from "neetoicons";
@@ -41,10 +43,10 @@ const SearchBar = ({ searchTerm, filterValues, onFilterChange }) => {
     debounceTimer.current = setTimeout(() => {
       routerHistory.replace(
         value
-          ? `/movies?page=${DEFAULT_PAGE_INDEX}&searchTerm=${encodeURIComponent(
+          ? `${BASE_URL}movies?page=${DEFAULT_PAGE_INDEX}&searchTerm=${encodeURIComponent(
               value
             )}`
-          : "/movies"
+          : `${BASE_URL}movies`
       );
     }, 350);
   };

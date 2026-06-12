@@ -20,7 +20,7 @@
     "clearAll": "Clear all"
   },
   "search": {
-    "placeholder": "Search any movie or series... (press / to focus)",
+    "placeholder": "Search any movie or series (press / to focus)",
     "noResults": "No movie or series found"
   },
   "movieDetails": {

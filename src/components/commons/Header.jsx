@@ -1,3 +1,5 @@
+import { BASE_URL } from "constants";
+
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
@@ -13,17 +15,19 @@ const Header = () => {
       </div>
       <nav className="flex gap-6">
         <Link
-          to="/movies"
+          to={`${BASE_URL}movies`}
           className={`font-medium ${
-            pathname === "/movies" ? "text-blue-600" : "text-gray-600"
+            pathname === `${BASE_URL}movies` ? "text-blue-600" : "text-gray-600"
           }`}
         >
           {t("nav.home")}
         </Link>
         <Link
-          to="/favourites"
+          to={`${BASE_URL}favourites`}
           className={`font-medium ${
-            pathname === "/favourites" ? "text-blue-600" : "text-gray-600"
+            pathname === `${BASE_URL}favourites`
+              ? "text-blue-600"
+              : "text-gray-600"
           }`}
         >
           {t("nav.favourites")}
