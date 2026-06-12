@@ -38,12 +38,16 @@ const SearchBar = ({ searchTerm, filterValues, onFilterChange }) => {
 
   const handleSearchChange = ({ target: { value } }) => {
     setSearchKey(value);
+
     clearTimeout(debounceTimer.current);
+
     debounceTimer.current = setTimeout(() => {
+      const cleanSearchTerm = value.trimEnd();
+
       routerHistory.replace(
         value
           ? `${BASE_URL}movies?page=${DEFAULT_PAGE_INDEX}&searchTerm=${encodeURIComponent(
-              value
+              cleanSearchTerm
             )}`
           : `${BASE_URL}movies`
       );

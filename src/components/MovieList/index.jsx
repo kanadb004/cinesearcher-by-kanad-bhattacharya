@@ -12,6 +12,7 @@ import useViewHistory from "hooks/useViewHistory";
 import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
+import { buildUrl } from "utils/url";
 
 import { DEFAULT_PAGE_SIZE } from "./constants";
 import MovieListItem from "./MovieListItem";
@@ -31,7 +32,7 @@ const MovieList = () => {
   const routerHistory = useHistory();
 
   const searchParams = new URLSearchParams(location.search);
-  const searchTerm = searchParams.get("searchTerm") || "";
+  const searchTerm = (searchParams.get("searchTerm") || "").trimEnd();
   const currentPage = Number(searchParams.get("page")) || 1;
 
   const [filterValues, setFilterValues] = useState(FILTER_INITIAL_VALUES);
@@ -61,9 +62,11 @@ const MovieList = () => {
   } = useViewHistory();
 
   const handlePageNavigation = newPage => {
-    const params = new URLSearchParams(location.search);
-    params.set("page", newPage);
-    routerHistory.replace(`${BASE_URL}movies?${params.toString()}`);
+    const url = buildUrl(`${BASE_URL}movies`, {
+      searchTerm: searchTerm || undefined,
+      page: newPage,
+    });
+    routerHistory.replace(url);
   };
 
   const showLoader = isLoading || !areImagesLoaded;
