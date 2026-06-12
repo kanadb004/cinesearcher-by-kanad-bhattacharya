@@ -13,10 +13,9 @@ import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
 
+import { DEFAULT_PAGE_SIZE } from "./constants";
 import MovieListItem from "./MovieListItem";
 import SearchBar from "./SearchBar";
-
-const DEFAULT_PAGE_SIZE = 10;
 
 const getTypeParam = ({ movie, series }) => {
   if (movie && !series) return "movie";
