@@ -13,6 +13,7 @@ export const useFetchMovies = params =>
   useQuery({
     queryKey: ["movies", params],
     queryFn: () => moviesApi.fetch(params),
+    enabled: !!params.searchTerm,
     keepPreviousData: false,
     onSuccess: data => {
       if (data?.Response === "False") {

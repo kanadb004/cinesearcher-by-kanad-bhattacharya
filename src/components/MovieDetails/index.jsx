@@ -17,17 +17,8 @@ const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { t } = useTranslation();
-  //   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
-  const { data: movie = {}, isLoading } = useShowMovie(
-    { id: imdbID },
-    { enabled: !!imdbID }
-  );
+  const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
-  //   const [isFavourite, setIsFavourite] = useState(() => {
-  //     const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
-
-  //     return favs.includes(imdbID);
-  //   });
   const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {

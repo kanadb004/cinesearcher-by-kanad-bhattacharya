@@ -1,23 +1,20 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState } from "react";
 
 import { Header, PageLoader } from "components/commons";
 import MovieDetails from "components/MovieDetails";
 import ViewHistory from "components/ViewHistory";
 import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
-import { Filter, Search } from "neetoicons";
-import { Input, NoData, Pagination } from "neetoui";
-import { isEmpty } from "ramda";
+import useImagePreloader from "hooks/useImagePreloader";
+import useViewHistory from "hooks/useViewHistory";
+import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
-import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
-import FilterDropdown, { FILTER_INITIAL_VALUES } from "./FilterDropdown";
+import { FILTER_INITIAL_VALUES } from "./FilterDropdown";
 import MovieListItem from "./MovieListItem";
+import SearchBar from "./SearchBar";
 
-const HISTORY_STORAGE_KEY = "cinesearcher-history";
-const ACTIVE_ID_STORAGE_KEY = "cinesearcher-active-id";
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_PAGE_INDEX = 1;
 
 const getTypeParam = ({ movie, series }) => {
   if (movie && !series) return "movie";
@@ -34,29 +31,12 @@ const MovieList = () => {
 
   const searchParams = new URLSearchParams(location.search);
   const searchTerm = searchParams.get("searchTerm") || "";
-  const currentPage = Number(searchParams.get("page")) || DEFAULT_PAGE_INDEX;
+  const currentPage = Number(searchParams.get("page")) || 1;
 
-  const [searchKey, setSearchKey] = useState(searchTerm);
-  const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterValues, setFilterValues] = useState(FILTER_INITIAL_VALUES);
-  const [areImagesLoaded, setAreImagesLoaded] = useState(false);
-  const [activeHistoryId, setActiveHistoryId] = useState(
-    () => getFromLocalStorage(ACTIVE_ID_STORAGE_KEY) || null
-  );
-
-  const [viewHistory, setViewHistory] = useState(
-    () => getFromLocalStorage(HISTORY_STORAGE_KEY) || []
-  );
-
-  const searchInputRef = useRef(null);
-  const itemRefs = useRef({});
-  const debounceTimer = useRef(null);
-
-  const fetchTerm = searchTerm || "spider-man";
 
   const { data = {}, isLoading } = useFetchMovies({
-    searchTerm: fetchTerm,
+    searchTerm,
     page: currentPage,
     year: filterValues.year || undefined,
     type: getTypeParam(filterValues),
@@ -66,96 +46,18 @@ const MovieList = () => {
   const hasError = data?.Response === "False";
   const totalResults = Number(data?.totalResults) || 0;
 
-  useEffect(() => {
-    if (isLoading) setAreImagesLoaded(false);
-  }, [isLoading]);
+  const areImagesLoaded = useImagePreloader(movies, isLoading);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    if (isLoading) {
-      return () => {};
-    }
-
-    if (!movies?.length) {
-      setAreImagesLoaded(true);
-
-      return () => {};
-    }
-
-    const posters = movies
-      .map(movie => movie.Poster)
-      .filter(poster => poster && poster !== "N/A");
-
-    if (!posters.length) {
-      setAreImagesLoaded(true);
-
-      return () => {};
-    }
-
-    let remaining = posters.length;
-
-    posters.forEach(src => {
-      const img = new Image();
-
-      img.onload = img.onerror = () => {
-        if (cancelled) return;
-
-        remaining -= 1;
-
-        if (remaining === 0) {
-          setAreImagesLoaded(true);
-        }
-      };
-
-      img.src = src;
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [movies, isLoading]);
-
-  const handleFilterChange = useCallback(newFilterValues => {
-    setFilterValues(newFilterValues);
-  }, []);
-
-  const handleDeleteHistoryItem = useCallback(
-    imdbID => {
-      const updated = viewHistory.filter(item => item.imdbID !== imdbID);
-      setViewHistory(updated);
-      setToLocalStorage(HISTORY_STORAGE_KEY, updated);
-      if (activeHistoryId === imdbID) {
-        setActiveHistoryId(null);
-        setToLocalStorage(ACTIVE_ID_STORAGE_KEY, null);
-      }
-    },
-    [viewHistory, activeHistoryId]
-  );
-
-  const handleClearHistory = useCallback(() => {
-    setViewHistory([]);
-    setToLocalStorage(HISTORY_STORAGE_KEY, []);
-    setActiveHistoryId(null);
-    setToLocalStorage(ACTIVE_ID_STORAGE_KEY, null);
-  }, []);
-
-  useEffect(() => {
-    setSearchKey(searchTerm);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    const handleKeyDown = e => {
-      if (e.key === "/" && document.activeElement !== searchInputRef.current) {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  const {
+    selectedMovieId,
+    setSelectedMovieId,
+    activeHistoryId,
+    viewHistory,
+    itemRefs,
+    handleDeleteHistoryItem,
+    handleClearHistory,
+    handleViewDetails,
+  } = useViewHistory();
 
   const handlePageNavigation = newPage => {
     const params = new URLSearchParams(location.search);
@@ -163,33 +65,39 @@ const MovieList = () => {
     routerHistory.replace(`/movies?${params.toString()}`);
   };
 
-  const handleViewDetails = movie => {
-    setSelectedMovieId(movie.imdbID);
-    setActiveHistoryId(movie.imdbID);
-    setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.imdbID);
+  const showLoader = isLoading || !areImagesLoaded;
 
-    const alreadyExists = viewHistory.find(
-      item => item.imdbID === movie.imdbID
-    );
-
-    if (alreadyExists) {
-      itemRefs.current[movie.imdbID]?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-
-      return;
+  const renderMovieContent = () => {
+    if (!searchTerm) {
+      return (
+        <div className="flex h-full w-full items-center justify-center pt-20">
+          <NoData />
+        </div>
+      );
     }
 
-    const updatedHistory = [
-      { imdbID: movie.imdbID, Title: movie.Title },
-      ...viewHistory,
-    ];
-    setViewHistory(updatedHistory);
-    setToLocalStorage(HISTORY_STORAGE_KEY, updatedHistory);
-  };
+    if (showLoader) return <PageLoader />;
 
-  const showLoader = isLoading || !areImagesLoaded;
+    if (hasError || !movies?.length) {
+      return (
+        <div className="flex h-full w-full items-center justify-center pt-20">
+          <NoData title={t("search.noResults")} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {movies.map(movie => (
+          <MovieListItem
+            key={movie.imdbID}
+            {...movie}
+            onViewDetails={() => handleViewDetails(movie)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f5f5]">
@@ -197,69 +105,12 @@ const MovieList = () => {
       <div className="flex flex-1">
         <div className="flex flex-1 flex-col items-center py-10">
           <div className="w-full max-w-5xl space-y-10 px-6">
-            <div className="flex justify-center">
-              <div className="relative flex w-full items-center gap-3">
-                <Input
-                  autoFocus={false}
-                  className="flex-1 rounded-md border-[#ddd] bg-white shadow-sm"
-                  placeholder={t("search.placeholder")}
-                  prefix={<Search className="text-gray-400" />}
-                  ref={searchInputRef}
-                  size="large"
-                  type="search"
-                  value={searchKey}
-                  onChange={({ target: { value } }) => {
-                    setSearchKey(value);
-                    clearTimeout(debounceTimer.current);
-                    debounceTimer.current = setTimeout(() => {
-                      routerHistory.replace(
-                        value
-                          ? `/movies?page=${DEFAULT_PAGE_INDEX}&searchTerm=${encodeURIComponent(
-                              value
-                            )}`
-                          : "/movies"
-                      );
-                    }, 350);
-                  }}
-                />
-                <button
-                  className="flex-shrink-0 cursor-pointer text-gray-500 hover:text-gray-700"
-                  type="button"
-                  onClick={() => setIsFilterOpen(prev => !prev)}
-                >
-                  <Filter size={20} />
-                </button>
-                {isFilterOpen && (
-                  <div className="absolute right-0 top-12 z-50">
-                    <FilterDropdown
-                      initialValues={filterValues}
-                      onClose={() => setIsFilterOpen(false)}
-                      onFilterChange={handleFilterChange}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-            {
-              // eslint-disable-next-line no-nested-ternary
-              showLoader ? (
-                <PageLoader />
-              ) : hasError || isEmpty(movies) ? (
-                <div className="flex h-full w-full items-center justify-center pt-20">
-                  <NoData title={t("search.noResults")} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {movies.map(movie => (
-                    <MovieListItem
-                      key={movie.imdbID}
-                      {...movie}
-                      onViewDetails={() => handleViewDetails(movie)}
-                    />
-                  ))}
-                </div>
-              )
-            }
+            <SearchBar
+              filterValues={filterValues}
+              searchTerm={searchTerm}
+              onFilterChange={setFilterValues}
+            />
+            {renderMovieContent()}
           </div>
           {!showLoader && !hasError && totalResults > DEFAULT_PAGE_SIZE && (
             <div className="mb-5 mt-8 self-end pr-6">
