@@ -16,11 +16,11 @@ const Header = () => {
 
   return (
     <div className="flex items-center gap-8 border-b border-gray-200 bg-white px-8 py-4">
-      <div className="text-2xl font-bold">
+      <div className="text-3xl font-bold">
         <span className="text-blue-600">Cine </span>
         <span>Searcher</span>
       </div>
-      <nav className="flex gap-6">
+      <nav className="flex gap-6 pt-3">
         <Link
           className={getNavLinkClass(`${BASE_URL}movies`)}
           to={`${BASE_URL}movies`}
