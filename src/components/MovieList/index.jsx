@@ -1,6 +1,6 @@
 import { BASE_URL } from "constants/apis";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Header, PageLoader } from "components/commons";
 import { FILTER_INITIAL_VALUES } from "components/FilterDropdown/constants";
@@ -8,10 +8,10 @@ import MovieDetails from "components/MovieDetails";
 import ViewHistory from "components/ViewHistory";
 import { useFetchMovies } from "hooks/reactQuery/useMoviesApi";
 import useImagePreloader from "hooks/useImagePreloader";
-import useViewHistory from "hooks/useViewHistory";
 import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
+import useViewHistoryStore from "stores/useViewHistoryStore";
 
 import { DEFAULT_PAGE_SIZE } from "./constants";
 import MovieListItem from "./MovieListItem";
@@ -48,16 +48,20 @@ const MovieList = () => {
 
   const areImagesLoaded = useImagePreloader(movies, isLoading);
 
-  const {
-    selectedMovieId,
-    setSelectedMovieId,
-    activeHistoryId,
-    viewHistory,
-    itemRefs,
-    handleDeleteHistoryItem,
-    handleClearHistory,
-    handleViewDetails,
-  } = useViewHistory();
+  const { selectedMovieId, setSelectedMovieId, addToViewHistory } =
+    useViewHistoryStore.pick();
+
+  const itemRefs = useRef({});
+
+  const handleViewDetails = movie => {
+    const wasAlreadyInHistory = addToViewHistory(movie);
+    if (wasAlreadyInHistory) {
+      itemRefs.current[movie.id]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  };
 
   const handlePageNavigation = newPage => {
     const params = new URLSearchParams(location.search);
@@ -124,13 +128,7 @@ const MovieList = () => {
           )}
         </div>
         <div className="sticky top-0 h-screen overflow-y-auto border-l border-gray-200 bg-white p-6">
-          <ViewHistory
-            activeId={activeHistoryId}
-            history={viewHistory}
-            itemRefs={itemRefs}
-            onClearAll={handleClearHistory}
-            onDeleteItem={handleDeleteHistoryItem}
-          />
+          <ViewHistory itemRefs={itemRefs} />
         </div>
       </div>
       <MovieDetails

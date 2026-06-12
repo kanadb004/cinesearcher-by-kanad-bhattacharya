@@ -4,19 +4,17 @@ import { Delete } from "neetoicons";
 import { Alert, Button, Typography } from "neetoui";
 import { isEmpty } from "ramda";
 import { Trans, useTranslation } from "react-i18next";
+import useViewHistoryStore from "stores/useViewHistoryStore";
 
 import "./index.css";
 
-const ViewHistory = ({
-  history,
-  activeId,
-  itemRefs,
-  onDeleteItem,
-  onClearAll,
-}) => {
+const ViewHistory = ({ itemRefs }) => {
   const { t } = useTranslation();
   const [showClearAllAlert, setShowClearAllAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+
+  const { viewHistory, activeHistoryId, deleteHistoryItem, clearHistory } =
+    useViewHistoryStore.pick();
 
   return (
     <div className="w-64 flex-shrink-0">
@@ -24,7 +22,7 @@ const ViewHistory = ({
         <Typography style="h3" weight="bold">
           {t("viewHistory.title")}
         </Typography>
-        {!isEmpty(history) && (
+        {!isEmpty(viewHistory) && (
           <Button
             className="clear-all-btn text-red-500 hover:text-red-600"
             label={t("label.clearAll")}
@@ -34,12 +32,12 @@ const ViewHistory = ({
         )}
       </div>
       <div className="flex flex-col gap-2 overflow-y-auto">
-        {isEmpty(history) ? (
+        {isEmpty(viewHistory) ? (
           <Typography className="mt-4 text-gray-500" style="body2">
             {t("viewHistory.empty")}
           </Typography>
         ) : (
-          history.map(({ imdbID, title }) => (
+          viewHistory.map(({ imdbID, title }) => (
             <div
               className="flex items-center justify-between rounded-md px-4 py-2"
               key={imdbID}
@@ -47,14 +45,14 @@ const ViewHistory = ({
                 itemRefs.current[imdbID] = el;
               }}
               style={{
-                background: activeId === imdbID ? "#2f62ff" : "#E4E4F8",
-                color: activeId === imdbID ? "#fff" : "inherit",
+                background: activeHistoryId === imdbID ? "#2f62ff" : "#E4E4F8",
+                color: activeHistoryId === imdbID ? "#fff" : "inherit",
               }}
             >
               <Typography
                 className="flex-1 text-center"
                 style="body2"
-                weight={activeId === imdbID ? "semibold" : "normal"}
+                weight={activeHistoryId === imdbID ? "semibold" : "normal"}
               >
                 {title}
               </Typography>
@@ -84,7 +82,7 @@ const ViewHistory = ({
         }
         onClose={() => setItemToDelete(null)}
         onSubmit={() => {
-          onDeleteItem(itemToDelete.imdbID);
+          deleteHistoryItem(itemToDelete.imdbID);
           setItemToDelete(null);
         }}
       />
@@ -95,7 +93,7 @@ const ViewHistory = ({
         title={t("viewHistory.clearAll.title")}
         onClose={() => setShowClearAllAlert(false)}
         onSubmit={() => {
-          onClearAll();
+          clearHistory();
           setShowClearAllAlert(false);
         }}
       />

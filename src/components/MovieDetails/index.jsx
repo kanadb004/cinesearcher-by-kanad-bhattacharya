@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 /* eslint-disable import/extensions */
 import fallbackPoster from "assets/images/fallback-poster.svg";
 import starFilled from "assets/images/star-filled.png";
@@ -9,35 +7,18 @@ import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
 import { Modal, Button, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
-import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
+import useFavouritesStore from "stores/useFavouritesStore";
 
 import "./index.css";
-
-const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
 
 const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { t } = useTranslation();
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
-  const [isFavourite, setIsFavourite] = useState(false);
-
-  useEffect(() => {
-    if (!imdbID) return;
-
-    const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
-    setIsFavourite(favs.includes(imdbID));
-  }, [imdbID]);
+  const { favourites, toggleFavourite } = useFavouritesStore.pick();
+  const isFavourite = favourites.some(fav => fav.imdbID === imdbID);
 
   const isPosterValid = !!movie.poster;
-
-  const handleToggleFavourite = () => {
-    const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
-    const updated = isFavourite
-      ? favs.filter(id => id !== imdbID)
-      : [imdbID, ...favs];
-    setToLocalStorage(FAVOURITES_STORAGE_KEY, updated);
-    setIsFavourite(!isFavourite);
-  };
 
   return (
     <Modal
@@ -72,7 +53,13 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
                   : t("movieDetails.addToFavourites"),
                 position: "right",
               }}
-              onClick={handleToggleFavourite}
+              onClick={() =>
+                toggleFavourite({
+                  imdbID,
+                  title: movie.title,
+                  imdbRating: movie.imdbRating,
+                })
+              }
             />
           )}
         </div>

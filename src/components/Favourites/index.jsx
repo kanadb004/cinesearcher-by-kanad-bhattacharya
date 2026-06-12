@@ -1,22 +1,14 @@
-import { FAVOURITES_STORAGE_KEY } from "constants/favourites";
-
-import { useState } from "react";
-
 import { Header } from "components/commons";
 import { NoData } from "neetoui";
 import { isEmpty } from "ramda";
 import { useTranslation } from "react-i18next";
-import { getFromLocalStorage } from "utils/storage";
+import useFavouritesStore from "stores/useFavouritesStore";
 
 import FavouriteItem from "./FavouriteItem";
 
 const Favourites = () => {
   const { t } = useTranslation();
-
-  // eslint-disable-next-line react/hook-use-state
-  const [favourites] = useState(
-    () => getFromLocalStorage(FAVOURITES_STORAGE_KEY) || []
-  );
+  const favourites = useFavouritesStore.pickFrom();
 
   return (
     <div className="min-h-screen bg-white">
@@ -28,8 +20,13 @@ const Favourites = () => {
               <NoData title={t("favourites.empty")} />
             </div>
           ) : (
-            favourites.map(imdbID => (
-              <FavouriteItem imdbID={imdbID} key={imdbID} />
+            favourites.map(({ imdbID, title, imdbRating }) => (
+              <FavouriteItem
+                imdbID={imdbID}
+                imdbRating={imdbRating}
+                key={imdbID}
+                title={title}
+              />
             ))
           )}
         </div>
