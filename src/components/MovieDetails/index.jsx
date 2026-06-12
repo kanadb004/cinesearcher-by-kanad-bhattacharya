@@ -20,6 +20,16 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
 
   const isPosterValid = !!movie.poster;
 
+  const detailsList = [
+    { label: t("label.director"), value: movie.director },
+    { label: t("label.actors"), value: movie.actors },
+    { label: t("label.boxOffice"), value: movie.boxOffice },
+    { label: t("label.year"), value: movie.year },
+    { label: t("label.runtime"), value: movie.runtime },
+    { label: t("label.language"), value: movie.language },
+    { label: t("label.rated"), value: movie.rated },
+  ];
+
   return (
     <Modal
       className="movie-details-modal max-h-[70vh] overflow-y-auto"
@@ -105,27 +115,15 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
               <Typography className="italic leading-relaxed text-gray-500">
                 {movie.plot}
               </Typography>
-              <Typography>
-                <strong>{t("label.director")}:</strong> {movie.director}
-              </Typography>
-              <Typography>
-                <strong>{t("label.actors")}:</strong> {movie.actors}
-              </Typography>
-              <Typography>
-                <strong>{t("label.boxOffice")}:</strong> {movie.boxOffice}
-              </Typography>
-              <Typography>
-                <strong>{t("label.year")}:</strong> {movie.year}
-              </Typography>
-              <Typography>
-                <strong>{t("label.runtime")}:</strong> {movie.runtime}
-              </Typography>
-              <Typography>
-                <strong>{t("label.language")}:</strong> {movie.language}
-              </Typography>
-              <Typography>
-                <strong>{t("label.rated")}:</strong> {movie.rated}
-              </Typography>
+              {detailsList.map(
+                ({ label, value }) =>
+                  // Optional: Only render if the value exists
+                  value && (
+                    <Typography key={label}>
+                      <strong>{label}:</strong> {value}
+                    </Typography>
+                  )
+              )}
             </div>
           </div>
         )}
