@@ -21,10 +21,10 @@ const useImagePreloader = (movies, isLoading) => {
     }
 
     const posters = movies
-      .map(movie => movie.Poster)
-      .filter(poster => poster && poster !== "N/A");
+      .map(movie => movie.posterUrl)
+      .filter(poster => !!poster);
 
-    // All posters are N/A or missing — unblock immediately
+    // All posters are missing — unblock immediately
     if (!posters.length) {
       setAreImagesLoaded(true);
 

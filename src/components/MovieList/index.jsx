@@ -12,7 +12,6 @@ import useViewHistory from "hooks/useViewHistory";
 import { NoData, Pagination } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory } from "react-router-dom";
-import { buildUrl } from "utils/url";
 
 import { DEFAULT_PAGE_SIZE } from "./constants";
 import MovieListItem from "./MovieListItem";
@@ -32,7 +31,7 @@ const MovieList = () => {
   const routerHistory = useHistory();
 
   const searchParams = new URLSearchParams(location.search);
-  const searchTerm = (searchParams.get("searchTerm") || "").trimEnd();
+  const searchTerm = searchParams.get("searchTerm") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
 
   const [filterValues, setFilterValues] = useState(FILTER_INITIAL_VALUES);
@@ -44,9 +43,8 @@ const MovieList = () => {
     type: getTypeParam(filterValues),
   });
 
-  const movies = data?.Search;
-  const hasError = data?.Response === "False";
-  const totalResults = Number(data?.totalResults) || 0;
+  const { movies = [], totalResults = 0, error } = data;
+  const hasError = !!error;
 
   const areImagesLoaded = useImagePreloader(movies, isLoading);
 
@@ -62,11 +60,9 @@ const MovieList = () => {
   } = useViewHistory();
 
   const handlePageNavigation = newPage => {
-    const url = buildUrl(`${BASE_URL}movies`, {
-      searchTerm: searchTerm || undefined,
-      page: newPage,
-    });
-    routerHistory.replace(url);
+    const params = new URLSearchParams(location.search);
+    params.set("page", newPage);
+    routerHistory.replace(`${BASE_URL}movies?${params.toString()}`);
   };
 
   const showLoader = isLoading || !areImagesLoaded;
@@ -94,7 +90,7 @@ const MovieList = () => {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {movies.map(movie => (
           <MovieListItem
-            key={movie.imdbID}
+            key={movie.id}
             {...movie}
             onViewDetails={() => handleViewDetails(movie)}
           />

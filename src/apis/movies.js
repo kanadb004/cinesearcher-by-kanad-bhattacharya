@@ -1,9 +1,9 @@
-import { OMDB_API_KEY, OMDB_API_URL } from "constants/apis";
+import { OMDB_API_KEY } from "constants/apis";
 
 import axios from "axios";
 
-const show = async ({ id, plot = "short" }) => {
-  const response = await axios.get(OMDB_API_URL, {
+const show = async ({ id, plot = "short" }) =>
+  axios.get("/", {
     params: {
       apikey: OMDB_API_KEY,
       i: id,
@@ -11,11 +11,8 @@ const show = async ({ id, plot = "short" }) => {
     },
   });
 
-  return response.data;
-};
-
-const fetch = async ({ searchTerm, type, year, page = 1 }) => {
-  const response = await axios.get(OMDB_API_URL, {
+const fetch = async ({ searchTerm, type, year, page = 1 }) =>
+  axios.get("/", {
     params: {
       apikey: OMDB_API_KEY,
       s: searchTerm,
@@ -24,9 +21,6 @@ const fetch = async ({ searchTerm, type, year, page = 1 }) => {
       page,
     },
   });
-
-  return response.data;
-};
 
 const moviesApi = { show, fetch };
 

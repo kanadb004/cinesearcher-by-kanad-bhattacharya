@@ -38,16 +38,14 @@ const useViewHistory = () => {
 
   const handleViewDetails = useCallback(
     movie => {
-      setSelectedMovieId(movie.imdbID);
-      setActiveHistoryId(movie.imdbID);
-      setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.imdbID);
+      setSelectedMovieId(movie.id);
+      setActiveHistoryId(movie.id);
+      setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.id);
 
-      const alreadyExists = viewHistory.find(
-        item => item.imdbID === movie.imdbID
-      );
+      const alreadyExists = viewHistory.find(item => item.imdbID === movie.id);
 
       if (alreadyExists) {
-        itemRefs.current[movie.imdbID]?.scrollIntoView({
+        itemRefs.current[movie.id]?.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
         });
@@ -56,7 +54,7 @@ const useViewHistory = () => {
       }
 
       const updatedHistory = [
-        { imdbID: movie.imdbID, Title: movie.Title },
+        { imdbID: movie.id, title: movie.title },
         ...viewHistory,
       ];
       setViewHistory(updatedHistory);

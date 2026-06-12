@@ -16,8 +16,8 @@ export const useFetchMovies = params =>
     enabled: !!params.searchTerm,
     keepPreviousData: false,
     onSuccess: data => {
-      if (data?.Response === "False") {
-        Toastr.error(data.Error);
+      if (data?.error) {
+        Toastr.error(data.error);
       }
     },
   });

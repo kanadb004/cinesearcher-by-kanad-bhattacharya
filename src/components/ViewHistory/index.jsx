@@ -39,14 +39,16 @@ const ViewHistory = ({
             {t("viewHistory.empty")}
           </Typography>
         ) : (
-          history.map(({ imdbID, Title }) => (
+          history.map(({ imdbID, title }) => (
             <div
+              className="flex items-center justify-between rounded-md px-4 py-2"
               key={imdbID}
-              className={`history-item flex items-center justify-between rounded-md px-4 py-2 ${
-                activeId === imdbID ? "active" : ""
-              }`}
               ref={el => {
                 itemRefs.current[imdbID] = el;
+              }}
+              style={{
+                background: activeId === imdbID ? "#2f62ff" : "#E4E4F8",
+                color: activeId === imdbID ? "#fff" : "inherit",
               }}
             >
               <Typography
@@ -54,12 +56,12 @@ const ViewHistory = ({
                 style="body2"
                 weight={activeId === imdbID ? "semibold" : "normal"}
               >
-                {Title}
+                {title}
               </Typography>
               <button
                 className="ml-1 flex-shrink-0 cursor-pointer opacity-60 hover:opacity-100"
                 type="button"
-                onClick={() => setItemToDelete({ imdbID, Title })}
+                onClick={() => setItemToDelete({ imdbID, title })}
               >
                 <Delete size={20} />
               </button>
@@ -76,7 +78,7 @@ const ViewHistory = ({
             <Trans
               components={{ strong: <strong /> }}
               i18nKey="viewHistory.removeItem.message"
-              values={{ title: itemToDelete?.Title }}
+              values={{ title: itemToDelete?.title }}
             />
           </Typography>
         }

@@ -53,5 +53,10 @@
   "pageNotFound": {
     "title": "The page you're looking for can't be found",
     "backHome": "Back to home"
+  },
+  "toast": {
+    "movieNotFound": "Movie not found",
+    "networkError": "Network Error",
+    "noInternetConnection": "No internet connection"
   }
 }

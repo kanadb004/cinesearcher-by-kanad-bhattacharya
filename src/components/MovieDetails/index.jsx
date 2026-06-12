@@ -1,5 +1,3 @@
-import { FAVOURITES_STORAGE_KEY } from "constants/favourites";
-
 import { useState, useEffect } from "react";
 
 /* eslint-disable import/extensions */
@@ -15,6 +13,8 @@ import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 import "./index.css";
 
+const FAVOURITES_STORAGE_KEY = "cinesearcher-favourites";
+
 const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { t } = useTranslation();
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
@@ -28,7 +28,7 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
     setIsFavourite(favs.includes(imdbID));
   }, [imdbID]);
 
-  const isPosterValid = movie.Poster && movie.Poster !== "N/A";
+  const isPosterValid = !!movie.poster;
 
   const handleToggleFavourite = () => {
     const favs = getFromLocalStorage(FAVOURITES_STORAGE_KEY) || [];
@@ -49,7 +49,7 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
       <Modal.Header>
         <div className="flex items-center gap-3">
           <Typography style="h2" weight="bold">
-            {movie.Title}
+            {movie.title}
           </Typography>
           {!isLoading && (
             <Button
@@ -77,20 +77,19 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
           )}
         </div>
         <div className="flex flex-wrap gap-2 pb-2.5 pt-2.5">
-          {movie.Genre &&
-            movie.Genre.split(", ").map(genre => (
-              <span
-                key={genre}
-                style={{
-                  background: "#f0f0f0",
-                  borderRadius: "4px",
-                  fontSize: "13px",
-                  padding: "2px 8px",
-                }}
-              >
-                {genre}
-              </span>
-            ))}
+          {movie.genres?.map(genre => (
+            <span
+              key={genre}
+              style={{
+                background: "#f0f0f0",
+                borderRadius: "4px",
+                fontSize: "13px",
+                padding: "2px 8px",
+              }}
+            >
+              {genre}
+            </span>
+          ))}
         </div>
       </Modal.Header>
       <Modal.Body>
@@ -101,44 +100,44 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
             <div className="flex w-full justify-center md:w-1/3 md:justify-start">
               {isPosterValid ? (
                 <img
-                  alt={movie.Title}
+                  alt={movie.title}
                   className="w-full max-w-[250px] rounded-lg object-cover"
-                  src={movie.Poster}
+                  src={movie.poster}
                   onError={e => {
                     e.target.src = fallbackPoster;
                   }}
                 />
               ) : (
                 <FallbackImage
-                  alt={movie.Title}
+                  alt={movie.title}
                   className="w-full max-w-[250px] rounded-lg"
                 />
               )}
             </div>
             <div className="w-full space-y-3 md:w-2/3">
               <Typography className="italic leading-relaxed text-gray-500">
-                {movie.Plot}
+                {movie.plot}
               </Typography>
               <Typography>
-                <strong>{t("label.director")}:</strong> {movie.Director}
+                <strong>{t("label.director")}:</strong> {movie.director}
               </Typography>
               <Typography>
-                <strong>{t("label.actors")}:</strong> {movie.Actors}
+                <strong>{t("label.actors")}:</strong> {movie.actors}
               </Typography>
               <Typography>
-                <strong>{t("label.boxOffice")}:</strong> {movie.BoxOffice}
+                <strong>{t("label.boxOffice")}:</strong> {movie.boxOffice}
               </Typography>
               <Typography>
-                <strong>{t("label.year")}:</strong> {movie.Year}
+                <strong>{t("label.year")}:</strong> {movie.year}
               </Typography>
               <Typography>
-                <strong>{t("label.runtime")}:</strong> {movie.Runtime}
+                <strong>{t("label.runtime")}:</strong> {movie.runtime}
               </Typography>
               <Typography>
-                <strong>{t("label.language")}:</strong> {movie.Language}
+                <strong>{t("label.language")}:</strong> {movie.language}
               </Typography>
               <Typography>
-                <strong>{t("label.rated")}:</strong> {movie.Rated}
+                <strong>{t("label.rated")}:</strong> {movie.rated}
               </Typography>
             </div>
           </div>

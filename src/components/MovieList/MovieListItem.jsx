@@ -8,27 +8,27 @@ import withT from "utils/withT";
 
 import "./MovieListItem.css";
 
-const MovieListItem = ({ Poster, Title, Type, Year, onViewDetails, t }) => (
+const MovieListItem = ({ posterUrl, title, type, year, onViewDetails, t }) => (
   <div className="flex w-full flex-col justify-between rounded-lg bg-white p-3 shadow-md">
     <div>
-      {Poster && Poster !== "N/A" ? (
+      {posterUrl ? (
         <img
-          alt={Title}
+          alt={title}
           className="w-full rounded object-cover"
-          src={Poster}
+          src={posterUrl}
           onError={e => {
             e.target.src = fallbackPoster;
           }}
         />
       ) : (
-        <FallbackImage alt={Title} className="w-full rounded object-cover" />
+        <FallbackImage alt={title} className="w-full rounded object-cover" />
       )}
       <div className="mt-3 space-y-1">
         <Typography style="h4" weight="bold">
-          {Title}
+          {title}
         </Typography>
         <Typography className="capitalize text-gray-400" style="body3">
-          {Type} • {Year}
+          {type} • {year}
         </Typography>
       </div>
     </div>
