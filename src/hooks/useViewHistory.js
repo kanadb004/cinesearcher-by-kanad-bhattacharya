@@ -1,9 +1,11 @@
+import {
+  HISTORY_STORAGE_KEY,
+  ACTIVE_ID_STORAGE_KEY,
+} from "constants/storageKeys";
+
 import { useState, useRef, useCallback } from "react";
 
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
-
-const HISTORY_STORAGE_KEY = "cinesearcher-history";
-const ACTIVE_ID_STORAGE_KEY = "cinesearcher-active-id";
 
 const useViewHistory = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);

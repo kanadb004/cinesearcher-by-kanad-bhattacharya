@@ -1,3 +1,5 @@
+import { FAVOURITES_STORAGE_KEY } from "constants/storageKeys";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -26,7 +28,7 @@ const useFavouritesStore = create(
         });
       },
     }),
-    { name: "cinesearcher-favourites" }
+    { name: FAVOURITES_STORAGE_KEY }
   )
 );
 

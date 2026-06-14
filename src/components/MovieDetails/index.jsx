@@ -117,7 +117,6 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
               </Typography>
               {detailsList.map(
                 ({ label, value }) =>
-                  // Optional: Only render if the value exists
                   value && (
                     <Typography key={label}>
                       <strong>{label}:</strong> {value}

@@ -1,3 +1,5 @@
+import { HISTORY_STORAGE_KEY } from "constants/storageKeys";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -53,7 +55,7 @@ const useViewHistoryStore = create(
         }),
     }),
     {
-      name: "cinesearcher-history",
+      name: HISTORY_STORAGE_KEY,
       partialize: state => ({
         viewHistory: state.viewHistory,
         activeHistoryId: state.activeHistoryId,

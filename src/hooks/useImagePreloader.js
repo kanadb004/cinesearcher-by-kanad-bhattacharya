@@ -24,7 +24,6 @@ const useImagePreloader = (movies, isLoading) => {
       .map(movie => movie.posterUrl)
       .filter(poster => !!poster);
 
-    // All posters are missing — unblock immediately
     if (!posters.length) {
       setAreImagesLoaded(true);
 
