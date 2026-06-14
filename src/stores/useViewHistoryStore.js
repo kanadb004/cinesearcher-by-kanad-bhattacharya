@@ -1,5 +1,6 @@
 import { HISTORY_STORAGE_KEY } from "constants/storageKeys";
 
+import { existsBy, removeBy } from "neetocist";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -14,9 +15,7 @@ const useViewHistoryStore = create(
 
       addToViewHistory: movie => {
         const { viewHistory } = get();
-        const alreadyInHistory = viewHistory.some(
-          item => item.imdbID === movie.id
-        );
+        const alreadyInHistory = existsBy({ imdbID: movie.id }, viewHistory);
 
         set({ selectedMovieId: movie.id, activeHistoryId: movie.id });
 
@@ -34,9 +33,7 @@ const useViewHistoryStore = create(
 
       deleteHistoryItem: imdbID => {
         const { viewHistory, activeHistoryId } = get();
-        const updatedHistory = viewHistory.filter(
-          item => item.imdbID !== imdbID
-        );
+        const updatedHistory = removeBy({ imdbID }, viewHistory);
         const wasActive = activeHistoryId === imdbID;
 
         set({

@@ -5,6 +5,7 @@ import {
 
 import { useState, useRef, useCallback } from "react";
 
+import { findBy, removeBy } from "neetocist";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 const useViewHistory = () => {
@@ -20,7 +21,7 @@ const useViewHistory = () => {
 
   const handleDeleteHistoryItem = useCallback(
     imdbID => {
-      const updated = viewHistory.filter(item => item.imdbID !== imdbID);
+      const updated = removeBy({ imdbID }, viewHistory);
       setViewHistory(updated);
       setToLocalStorage(HISTORY_STORAGE_KEY, updated);
       if (activeHistoryId === imdbID) {
@@ -44,7 +45,7 @@ const useViewHistory = () => {
       setActiveHistoryId(movie.id);
       setToLocalStorage(ACTIVE_ID_STORAGE_KEY, movie.id);
 
-      const alreadyExists = viewHistory.find(item => item.imdbID === movie.id);
+      const alreadyExists = findBy({ imdbID: movie.id }, viewHistory);
 
       if (alreadyExists) {
         itemRefs.current[movie.id]?.scrollIntoView({

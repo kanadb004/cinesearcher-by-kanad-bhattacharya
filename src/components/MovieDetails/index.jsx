@@ -5,6 +5,7 @@ import star from "assets/images/star.png";
 /* eslint-enable import/extensions */
 import { FallbackImage, PageLoader } from "components/commons";
 import { useShowMovie } from "hooks/reactQuery/useMoviesApi";
+import { existsBy } from "neetocist";
 import { Modal, Button, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
 import useFavouritesStore from "stores/useFavouritesStore";
@@ -16,7 +17,7 @@ const MovieDetails = ({ imdbID, isOpen, onClose }) => {
   const { data: movie = {}, isLoading } = useShowMovie({ id: imdbID });
 
   const { favourites, toggleFavourite } = useFavouritesStore.pick();
-  const isFavourite = favourites.some(fav => fav.imdbID === imdbID);
+  const isFavourite = existsBy({ imdbID }, favourites);
 
   const isPosterValid = !!movie.poster;
 

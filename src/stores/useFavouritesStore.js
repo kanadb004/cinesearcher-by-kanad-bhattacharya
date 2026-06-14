@@ -1,5 +1,6 @@
 import { FAVOURITES_STORAGE_KEY } from "constants/storageKeys";
 
+import { existsBy, removeBy } from "neetocist";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -10,13 +11,11 @@ const useFavouritesStore = create(
 
       toggleFavourite: movie => {
         const { favourites } = get();
-        const isFavourited = favourites.some(
-          fav => fav.imdbID === movie.imdbID
-        );
+        const isFavourited = existsBy({ imdbID: movie.imdbID }, favourites);
 
         set({
           favourites: isFavourited
-            ? favourites.filter(fav => fav.imdbID !== movie.imdbID)
+            ? removeBy({ imdbID: movie.imdbID }, favourites)
             : [
                 {
                   imdbID: movie.imdbID,
